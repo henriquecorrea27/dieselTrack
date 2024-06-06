@@ -78,15 +78,20 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
   const [telefone, setTelefone] = useState("");
   const [cep, setCep] = useState("");
 
+  const handleClosePopup = () => {
+    setOnEdit(null);
+    setTelefone(""); // Limpar o estado onEdit ao fechar o popup
+    togglePopup();
+  };
+
   useEffect(() => {
     if (onEdit && ref.current) {
       const cliente = ref.current;
       cliente.nome.value = onEdit.nome || "";
       cliente.email.value = onEdit.email || "";
-      setTelefone(onEdit.telefone || "");
-      cliente.cpf_cnpj.value = onEdit.cpf_cnpj || "";
+      setTelefone(formatTelefone(onEdit.telefone || ""));
+      cliente.cpf_cnpj.value = formatCpfCnpj(onEdit.cpf_cnpj || "");
 
-      // Preencher campos de endereço
       if (onEdit.endereco) {
         const { endereco } = onEdit;
         cliente.rua.value = endereco.rua || "";
@@ -319,8 +324,8 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
             <Input name="estado" />
           </InputArea>
           <ButtonGroup>
-            <Button type="button" variant="close" onClick={togglePopup}>
-              Fechar
+            <Button type="button" variant="close" onClick={handleClosePopup}>
+              FECHAR
             </Button>
             <Button type="submit">SALVAR</Button>
           </ButtonGroup>

@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-
+import { promisify } from "util";
 // No método getCliente
 export const getCliente = (_, res) => {
   const q =
@@ -60,8 +60,9 @@ export const addCliente = (req, res) => {
   });
 };
 
-export const updateCliente = (req, res) => {
+export const updateCliente = async (req, res) => {
   const { nome, email, telefone, cpf_cnpj, endereco } = req.body;
+  console.log(req.body);
   const clienteId = req.params.id;
 
   db.beginTransaction((err) => {
@@ -74,23 +75,17 @@ export const updateCliente = (req, res) => {
       "UPDATE clientes SET `nome` = ?, `email` = ?, `telefone` = ?, `cpf_cnpj` = ? WHERE `id` = ?";
     const values1 = [nome, email, telefone, cpf_cnpj, clienteId];
 
-    db.query(q1, values1, (err) => {
+    db.query(q1, values1, async (err) => {
       if (err) {
         console.error("Erro ao atualizar cliente:", err);
         return db.rollback(() => res.json(err));
       }
-
+      const { rua, numero, bairro, cidade, estado, cep } = endereco;
+      //console.log(endereco);
+      const id_endereco = await getIdByRua(rua, numero);
       const q2 =
         "UPDATE endereco SET `rua` = ?, `numero` = ?, `bairro` = ?, `cidade` = ?, `estado` = ?, `cep` = ? WHERE `id_endereco` = ?";
-      const values2 = [
-        endereco.rua,
-        endereco.numero,
-        endereco.bairro,
-        endereco.cidade,
-        endereco.estado,
-        endereco.cep,
-        endereco.id_endereco,
-      ];
+      const values2 = [rua, numero, bairro, cidade, estado, cep, id_endereco];
 
       db.query(q2, values2, (err) => {
         if (err) {
@@ -126,3 +121,22 @@ export const deleteCliente = (req, res) => {
     return res.status(200).json("Status do cliente atualizado para inativo.");
   });
 };
+
+const queryAsync = promisify(db.query).bind(db);
+
+export async function getIdByRua(rua, numero) {
+  const q1 = "select id_endereco from endereco where rua = ? and numero = ?";
+  const valuesEndereco = [rua, numero];
+
+  try {
+    const result = await queryAsync(q1, valuesEndereco);
+    if (result.length > 0) {
+      return result[0].id_endereco;
+    } else {
+      throw new Error("Endereço não encontrado");
+    }
+  } catch (err) {
+    console.error("Erro ao obter id do endereço:", err);
+    throw err;
+  }
+}

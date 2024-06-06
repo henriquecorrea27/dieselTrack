@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import GlobalStyle from "./styles/global";
 import Grid from "./components/Grid";
 import Form from "./components/Form";
+import DetailsModal from "./components/DetailsModal"; // Import the new DetailsModal component
 import logoImage from "C:/Users/helen/Documents/DieselTrack/frontend/src/logo.png";
 
 const Container = styled.div`
@@ -41,6 +42,7 @@ function App() {
   const [clientes, setClientes] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [viewDetails, setViewDetails] = useState(null); // New state for viewing details
 
   const getClientes = async () => {
     try {
@@ -75,6 +77,7 @@ function App() {
         clientes={clientes}
         setClientes={setClientes}
         setOnEdit={handleEdit}
+        setViewDetails={setViewDetails} // Pass setViewDetails to Grid
       />
       <Form
         getClientes={getClientes}
@@ -83,6 +86,12 @@ function App() {
         showPopup={showPopup}
         togglePopup={togglePopup}
       />
+      {viewDetails && (
+        <DetailsModal
+          cliente={viewDetails}
+          onClose={() => setViewDetails(null)}
+        />
+      )}
       <ToastContainer autoClose={3000} position="bottom-left" />
       <GlobalStyle />
     </>

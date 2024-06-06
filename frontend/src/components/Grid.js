@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Adicione o ícone de visualização
 import { toast } from "react-toastify";
 
 const Table = styled.table`
@@ -70,12 +70,19 @@ const ConfirmButton = styled.button`
   color: white;
   ${(props) =>
     props.variant === "yes"
-      ? "background-color: green;"
-      : "background-color: red;"}
+      ? "background-color: #2c73d2;"
+      : "background-color: #ff5e5e;"}
+`;
+
+const DetailsOverlay = styled(ConfirmOverlay)``;
+
+const DetailsBox = styled(ConfirmBox)`
+  text-align: left;
 `;
 
 const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [viewDetails, setViewDetails] = useState(null);
 
   const handleEdit = (item) => {
     setOnEdit(item);
@@ -101,6 +108,10 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
     setConfirmDelete(id);
   };
 
+  const viewClientDetails = (cliente) => {
+    setViewDetails(cliente);
+  };
+
   const formatCpfCnpj = (value) => {
     value = value.replace(/\D/g, ""); // Remove non-numeric characters
 
@@ -123,8 +134,14 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
   const formatTelefone = (value) => {
     value = value.replace(/\D/g, ""); // Remove non-numeric characters
 
-    if (value.length > 2) {
-      value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    if (value.length > 11) {
+      value = value.slice(0, 11); // Limit to 11 digits
+    }
+
+    if (value.length === 11) {
+      value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else if (value.length === 10) {
+      value = value.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
     }
 
     return value;
@@ -148,6 +165,45 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
           </ConfirmBox>
         </ConfirmOverlay>
       )}
+      {viewDetails && (
+        <DetailsOverlay onClick={() => setViewDetails(null)}>
+          <DetailsBox onClick={(e) => e.stopPropagation()}>
+            <h2>Detalhes do Cliente</h2>
+            <p>
+              <strong>Nome:</strong> {viewDetails.nome}
+            </p>
+            <p>
+              <strong>Email:</strong> {viewDetails.email}
+            </p>
+            <p>
+              <strong>Telefone:</strong> {formatTelefone(viewDetails.telefone)}
+            </p>
+            <p>
+              <strong>CPF/CNPJ:</strong> {formatCpfCnpj(viewDetails.cpf_cnpj)}
+            </p>
+            {viewDetails.endereco ? (
+              <>
+                <p>
+                  <strong>Endereço:</strong>
+                </p>
+                <p>Rua: {viewDetails.endereco.rua}</p>
+                <p>Número: {viewDetails.endereco.numero}</p>
+                <p>Bairro: {viewDetails.endereco.bairro}</p>
+                <p>Cidade: {viewDetails.endereco.cidade}</p>
+                <p>Estado: {viewDetails.endereco.estado}</p>
+                <p>CEP: {viewDetails.endereco.cep}</p>
+              </>
+            ) : (
+              <p>
+                <strong>Endereço:</strong> Não disponível
+              </p>
+            )}
+            <ConfirmButton variant="no" onClick={() => setViewDetails(null)}>
+              Fechar
+            </ConfirmButton>
+          </DetailsBox>
+        </DetailsOverlay>
+      )}
       <Table>
         <Thead>
           <Tr>
@@ -157,6 +213,7 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
             <Th onlyWeb>CPF/CNPJ</Th>
             <Th></Th>
             <Th></Th>
+            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -164,8 +221,8 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
             .filter((cliente) => cliente.status === "ativo")
             .map((item, i) => (
               <Tr key={i}>
-                <Td width="30%">{item.nome}</Td>
-                <Td width="20%">{item.email}</Td>
+                <Td width="25%">{item.nome}</Td>
+                <Td width="30%">{item.email}</Td>
                 <Td width="15%" onlyWeb>
                   {formatTelefone(item.telefone)}
                 </Td>
@@ -177,6 +234,9 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
                 </Td>
                 <Td alignCenter width="5%">
                   <FaTrash onClick={() => confirmDeleteClient(item.id)} />
+                </Td>
+                <Td alignCenter width="5%">
+                  <FaEye onClick={() => viewClientDetails(item)} />
                 </Td>
               </Tr>
             ))}

@@ -92,15 +92,12 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
       setTelefone(formatTelefone(onEdit.telefone || ""));
       cliente.cpf_cnpj.value = formatCpfCnpj(onEdit.cpf_cnpj || "");
 
-      if (onEdit.endereco) {
-        const { endereco } = onEdit;
-        cliente.rua.value = endereco.rua || "";
-        cliente.numero.value = endereco.numero || "";
-        cliente.bairro.value = endereco.bairro || "";
-        cliente.cidade.value = endereco.cidade || "";
-        cliente.estado.value = endereco.estado || "";
-        setCep(formatCep(endereco.cep || ""));
-      }
+      cliente.numero.value = onEdit.numero || "";
+      cliente.rua.value = onEdit.rua || "";
+      cliente.bairro.value = onEdit.bairro || "";
+      cliente.cidade.value = onEdit.cidade || "";
+      cliente.estado.value = onEdit.estado || "";
+      setCep(formatCep(onEdit.cep || ""));
     }
   }, [onEdit]);
 

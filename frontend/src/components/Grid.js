@@ -269,15 +269,15 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
             <Tr>
               <Th width="25%">Nome</Th>
               <Th width="30%">Email</Th>
-              <Th onlyWeb width="15%">
+              <Th onlyWeb width="19%">
                 Telefone
               </Th>
-              <Th onlyWeb width="15%">
+              <Th onlyWeb width="20%">
                 CPF/CNPJ
               </Th>
-              <Th width="5%"></Th>
-              <Th width="5%"></Th>
-              <Th width="5%"></Th>
+              <Th width="2%"></Th>
+              <Th width="2%"></Th>
+              <Th width="2%"></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -287,19 +287,19 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
                 <Tr key={i}>
                   <Td width="25%">{item.nome}</Td>
                   <Td width="30%">{item.email}</Td>
-                  <Td width="15%" onlyWeb>
+                  <Td width="19%" onlyWeb>
                     {formatTelefone(item.telefone)}
                   </Td>
-                  <Td width="15%" onlyWeb>
+                  <Td width="20%" onlyWeb>
                     {formatCpfCnpj(item.cpf_cnpj)}
                   </Td>
-                  <Td alignCenter width="5%">
+                  <Td alignCenter width="2%">
                     <FaEdit onClick={() => handleEdit(item)} />
                   </Td>
-                  <Td alignCenter width="5%">
+                  <Td alignCenter width="2%">
                     <FaTrash onClick={() => confirmDeleteClient(item.id)} />
                   </Td>
-                  <Td alignCenter width="5%">
+                  <Td alignCenter width="2%">
                     <FaEye onClick={() => viewClientDetails(item)} />
                   </Td>
                 </Tr>

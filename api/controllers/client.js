@@ -62,50 +62,34 @@ export const addCliente = (req, res) => {
 
 export const updateCliente = async (req, res) => {
   const { nome, email, telefone, cpf_cnpj, endereco } = req.body;
-  console.log(req.body);
   const clienteId = req.params.id;
 
-  db.beginTransaction((err) => {
-    if (err) {
-      console.error("Erro ao iniciar transação:", err);
-      return res.json(err);
-    }
+  try {
+    await db.beginTransaction();
 
     const q1 =
       "UPDATE clientes SET `nome` = ?, `email` = ?, `telefone` = ?, `cpf_cnpj` = ? WHERE `id` = ?";
     const values1 = [nome, email, telefone, cpf_cnpj, clienteId];
 
-    db.query(q1, values1, async (err) => {
-      if (err) {
-        console.error("Erro ao atualizar cliente:", err);
-        return db.rollback(() => res.json(err));
-      }
-      const { rua, numero, bairro, cidade, estado, cep } = endereco;
-      //console.log(endereco);
-      const id_endereco = await getIdByRua(rua, numero);
-      const q2 =
-        "UPDATE endereco SET `rua` = ?, `numero` = ?, `bairro` = ?, `cidade` = ?, `estado` = ?, `cep` = ? WHERE `id_endereco` = ?";
-      const values2 = [rua, numero, bairro, cidade, estado, cep, id_endereco];
+    await queryAsync(q1, values1);
 
-      db.query(q2, values2, (err) => {
-        if (err) {
-          console.error("Erro ao atualizar endereço:", err);
-          return db.rollback(() => res.json(err));
-        }
+    const { rua, numero, bairro, cidade, estado, cep } = endereco;
 
-        db.commit((err) => {
-          if (err) {
-            console.error("Erro ao fazer commit da transação:", err);
-            return db.rollback(() => res.json(err));
-          }
+    const id_endereco = await getId_Endereco(clienteId);
+    const q2 =
+      "UPDATE endereco SET `rua` = ?, `numero` = ?, `bairro` = ?, `cidade` = ?, `estado` = ?, `cep` = ? WHERE `id_endereco` = ?";
+    const values2 = [rua, numero, bairro, cidade, estado, cep, id_endereco];
 
-          return res
-            .status(200)
-            .json("Cliente e endereço atualizados com sucesso.");
-        });
-      });
-    });
-  });
+    await queryAsync(q2, values2);
+
+    await db.commit();
+
+    return res.status(200).json("Cliente e endereço atualizados com sucesso.");
+  } catch (error) {
+    console.error("Erro ao atualizar cliente:", error);
+    await db.rollback();
+    return res.status(500).json("Erro ao atualizar cliente e endereço.");
+  }
 };
 
 export const deleteCliente = (req, res) => {
@@ -124,12 +108,12 @@ export const deleteCliente = (req, res) => {
 
 const queryAsync = promisify(db.query).bind(db);
 
-export async function getIdByRua(rua, numero) {
-  const q1 = "select id_endereco from endereco where rua = ? and numero = ?";
-  const valuesEndereco = [rua, numero];
+export async function getId_Endereco(id) {
+  const q1 = "select id_endereco from clientes where id = ?";
+  const idcliente = id;
 
   try {
-    const result = await queryAsync(q1, valuesEndereco);
+    const result = await queryAsync(q1, idcliente);
     if (result.length > 0) {
       return result[0].id_endereco;
     } else {

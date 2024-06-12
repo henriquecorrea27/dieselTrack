@@ -52,29 +52,28 @@ const DetailsModal = ({ cliente, onClose }) => {
         <p>
           <strong>CPF/CNPJ:</strong> {cliente.cpf_cnpj}
         </p>
-        {cliente.endereco && (
-          <>
-            <h3>Endereço</h3>
-            <p>
-              <strong>Rua:</strong> {cliente.endereco.rua}
-            </p>
-            <p>
-              <strong>Número:</strong> {cliente.endereco.numero}
-            </p>
-            <p>
-              <strong>Bairro:</strong> {cliente.endereco.bairro}
-            </p>
-            <p>
-              <strong>Cidade:</strong> {cliente.endereco.cidade}
-            </p>
-            <p>
-              <strong>Estado:</strong> {cliente.endereco.estado}
-            </p>
-            <p>
-              <strong>CEP:</strong> {cliente.endereco.cep}
-            </p>
-          </>
-        )}
+        <>
+          <h3>Endereço</h3>
+          <p>
+            <strong>Rua:</strong> {cliente.rua}
+          </p>
+          <p>
+            <strong>Número:</strong> {cliente.numero}
+          </p>
+          <p>
+            <strong>Bairro:</strong> {cliente.bairro}
+          </p>
+          <p>
+            <strong>Cidade:</strong> {cliente.cidade}
+          </p>
+          <p>
+            <strong>Estado:</strong> {cliente.estado}
+          </p>
+          <p>
+            <strong>CEP:</strong> {cliente.cep}
+          </p>
+        </>
+
         <Button onClick={onClose}>Fechar</Button>
       </ModalContainer>
     </Overlay>

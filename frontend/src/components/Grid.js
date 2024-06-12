@@ -1,35 +1,88 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Adicione o ícone de visualização
+import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Ícones de ação
 import { toast } from "react-toastify";
 
-const Table = styled.table`
+// Container da tabela com rolagem vertical e largura responsiva
+const TableContainer = styled.div`
   width: 85vw;
   height: 70vh;
+  max-width: 100%;
   background-color: #fff;
   padding: 20px;
   box-shadow: 0px 0px 5px #ccc;
   border-radius: 5px;
   margin: 20px;
-  word-break: break-all;
-  overflow-y: auto; /* Enable vertical scroll */
+  overflow-y: auto; /* Rolagem vertical */
+
+  @media (max-width: 768px) {
+    width: 100vw;
+  }
 `;
 
-export const Thead = styled.thead``;
-export const Tbody = styled.tbody``;
-export const Tr = styled.tr``;
-export const Th = styled.th`
+// Estilização da tabela com layout fixo para colunas
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Garante largura fixa para as colunas */
+
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Evita quebra de linha */
+  }
+
+  thead th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+
+  tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+`;
+
+// Estilização para cabeçalho da tabela
+const Thead = styled.thead`
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* Garante largura fixa para as colunas */
+`;
+
+// Estilização para corpo da tabela com rolagem vertical
+const Tbody = styled.tbody`
+  display: block;
+  overflow-y: auto; /* Permite rolagem vertical */
+  max-height: calc(
+    70vh - 60px
+  ); /* Altura do corpo da tabela, ajustando para incluir padding e cabeçalho */
+`;
+
+// Estilização das linhas da tabela
+const Tr = styled.tr`
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* Garante largura fixa para as colunas */
+`;
+
+// Estilização das células de cabeçalho
+const Th = styled.th`
   text-align: start;
-  border-bottom: inset;
   padding-bottom: 5px;
+  background-color: #f5f5f5;
 
   @media (max-width: 500px) {
     ${(props) => props.onlyWeb && "display: none"}
   }
 `;
-export const Td = styled.td`
-  padding-top: 15px;
+
+// Estilização das células de dados
+const Td = styled.td`
   text-align: ${(props) => (props.alignCenter ? "center" : "start")};
   width: ${(props) => (props.width ? props.width : "auto")};
 
@@ -38,6 +91,7 @@ export const Td = styled.td`
   }
 `;
 
+// Estilização da sobreposição para confirmação
 const ConfirmOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -51,6 +105,7 @@ const ConfirmOverlay = styled.div`
   z-index: 1000;
 `;
 
+// Estilização da caixa de confirmação
 const ConfirmBox = styled.div`
   background: white;
   padding: 20px;
@@ -61,6 +116,7 @@ const ConfirmBox = styled.div`
   text-align: center;
 `;
 
+// Estilização dos botões de confirmação
 const ConfirmButton = styled.button`
   padding: 10px;
   margin: 5px;
@@ -181,67 +237,76 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
             <p>
               <strong>CPF/CNPJ:</strong> {formatCpfCnpj(viewDetails.cpf_cnpj)}
             </p>
-            {viewDetails.endereco ? (
-              <>
-                <p>
-                  <strong>Endereço:</strong>
-                </p>
-                <p>Rua: {viewDetails.endereco.rua}</p>
-                <p>Número: {viewDetails.endereco.numero}</p>
-                <p>Bairro: {viewDetails.endereco.bairro}</p>
-                <p>Cidade: {viewDetails.endereco.cidade}</p>
-                <p>Estado: {viewDetails.endereco.estado}</p>
-                <p>CEP: {viewDetails.endereco.cep}</p>
-              </>
-            ) : (
-              <p>
-                <strong>Endereço:</strong> Não disponível
-              </p>
-            )}
+
+            <p>
+              <strong>Rua</strong>: {viewDetails.rua}
+            </p>
+            <p>
+              <strong>Número</strong>: {viewDetails.numero}
+            </p>
+            <p>
+              <strong>Bairro</strong>: {viewDetails.bairro}
+            </p>
+            <p>
+              <strong>Cidade</strong>: {viewDetails.cidade}
+            </p>
+            <p>
+              <strong>Estado</strong>: {viewDetails.estado}
+            </p>
+            <p>
+              <strong>CEP</strong>: {viewDetails.cep}
+            </p>
+
             <ConfirmButton variant="no" onClick={() => setViewDetails(null)}>
               Fechar
             </ConfirmButton>
           </DetailsBox>
         </DetailsOverlay>
       )}
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Nome</Th>
-            <Th>Email</Th>
-            <Th onlyWeb>Telefone</Th>
-            <Th onlyWeb>CPF/CNPJ</Th>
-            <Th></Th>
-            <Th></Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {clientes
-            .filter((cliente) => cliente.status === "ativo")
-            .map((item, i) => (
-              <Tr key={i}>
-                <Td width="25%">{item.nome}</Td>
-                <Td width="30%">{item.email}</Td>
-                <Td width="15%" onlyWeb>
-                  {formatTelefone(item.telefone)}
-                </Td>
-                <Td width="15%" onlyWeb>
-                  {formatCpfCnpj(item.cpf_cnpj)}
-                </Td>
-                <Td alignCenter width="5%">
-                  <FaEdit onClick={() => handleEdit(item)} />
-                </Td>
-                <Td alignCenter width="5%">
-                  <FaTrash onClick={() => confirmDeleteClient(item.id)} />
-                </Td>
-                <Td alignCenter width="5%">
-                  <FaEye onClick={() => viewClientDetails(item)} />
-                </Td>
-              </Tr>
-            ))}
-        </Tbody>
-      </Table>
+      <TableContainer>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th width="25%">Nome</Th>
+              <Th width="30%">Email</Th>
+              <Th onlyWeb width="15%">
+                Telefone
+              </Th>
+              <Th onlyWeb width="15%">
+                CPF/CNPJ
+              </Th>
+              <Th width="5%"></Th>
+              <Th width="5%"></Th>
+              <Th width="5%"></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {clientes
+              .filter((cliente) => cliente.status === "ativo")
+              .map((item, i) => (
+                <Tr key={i}>
+                  <Td width="25%">{item.nome}</Td>
+                  <Td width="30%">{item.email}</Td>
+                  <Td width="15%" onlyWeb>
+                    {formatTelefone(item.telefone)}
+                  </Td>
+                  <Td width="15%" onlyWeb>
+                    {formatCpfCnpj(item.cpf_cnpj)}
+                  </Td>
+                  <Td alignCenter width="5%">
+                    <FaEdit onClick={() => handleEdit(item)} />
+                  </Td>
+                  <Td alignCenter width="5%">
+                    <FaTrash onClick={() => confirmDeleteClient(item.id)} />
+                  </Td>
+                  <Td alignCenter width="5%">
+                    <FaEye onClick={() => viewClientDetails(item)} />
+                  </Td>
+                </Tr>
+              ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </>
   );
 };

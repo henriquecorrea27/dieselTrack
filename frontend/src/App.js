@@ -7,7 +7,7 @@ import GlobalStyle from "./styles/global";
 import Grid from "./components/Grid";
 import Form from "./components/Form";
 import DetailsModal from "./components/DetailsModal"; // Import the new DetailsModal component
-import logoImage from "C:/Users/helen/OneDrive/Documentos/DieselTrack/dieselTrack/frontend/src/logo.png";
+import logoImage from "C:/Users/helen/Documents/dieselTrack/frontend/src/logo.png";
 
 const Container = styled.div`
   width: 100%;

@@ -16,18 +16,18 @@ const Overlay = styled.div`
 
 const ModalContainer = styled.div`
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
   width: 90%;
-  max-width: 600px;
+  max-width: 37.5rem;
 `;
 
 const Button = styled.button`
-  padding: 10px;
-  margin-top: 20px;
+  padding: 0.625rem;
+  margin-top: 1.25;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   border: none;
   color: white;
   background-color: #2c73d2;

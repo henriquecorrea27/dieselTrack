@@ -7,35 +7,34 @@ import GlobalStyle from "./styles/global";
 import Grid from "./components/Grid";
 import Form from "./components/Form";
 import DetailsModal from "./components/DetailsModal"; // Import the new DetailsModal component
-import logoImage from "C:/Users/helen/Documents/dieselTrack/frontend/src/logo.png";
 
 const Container = styled.div`
   width: 100%;
   max-width: 85vw;
-  margin-top: 30px;
+  margin-top: 1.875rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
 const Logo = styled.img`
-  width: 150px;
+  width: 11%;
 `;
 
 const CadastroButton = styled.button`
-  padding: 10px 20px;
+  padding: 0.625rem 1.25rem;
   background-color: #fff;
   color: #015fd0;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   cursor: pointer;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 0.938rem;
 `;
 
 const Title = styled.h2`
   color: #fff;
-  margin-left: 20px;
+  margin-left: 1.25rem;
 `;
 
 function App() {
@@ -70,7 +69,7 @@ function App() {
     <>
       <Container>
         <Title>CLIENTES</Title>
-        <Logo src={logoImage} alt="Logo" />
+        <Logo src="./assets/logo.png" alt="Logo" />
         <CadastroButton onClick={togglePopup}>Cadastrar Cliente</CadastroButton>
       </Container>
       <Grid

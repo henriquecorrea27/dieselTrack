@@ -108,19 +108,19 @@ const ConfirmOverlay = styled.div`
 // Estilização da caixa de confirmação
 const ConfirmBox = styled.div`
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
+  width: 25%;
   max-width: 90%;
   text-align: center;
 `;
 
 // Estilização dos botões de confirmação
 const ConfirmButton = styled.button`
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
+  padding: 0.625rem;
+  margin: 0.313rem;
+  border-radius: 0.313rem;
   border: none;
   cursor: pointer;
   color: white;

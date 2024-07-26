@@ -18,30 +18,30 @@ const Overlay = styled.div`
 
 const PopupContainer = styled.div`
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
   width: auto;
   max-width: 90%;
 `;
 
 const Button = styled.button`
-  padding: 10px;
+  padding: 0.625rem;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 0.313rem;
   border: none;
   color: white;
-  height: 42px;
+  height: 2.625rem;
   background-color: ${(props) =>
     props.variant === "close" ? "#ff5e5e" : "#2c73d2"};
 `;
 
 const FormContainer = styled.form`
   display: grid;
-  gap: 40px;
+  gap: 2.5rem;
   background-color: #fff;
-  padding: 20px 40px 20px 20px;
-  box-shadow: 0px 0px 5px #ccc;
-  border-radius: 5px;
+  padding: 1.25rem 2.5rem 1.25rem 1.25rem;
+  box-shadow: 0px 0px 0.313rem #ccc;
+  border-radius: 0.313rem;
   grid-template-columns: repeat(3, 1fr);
   grid-template-areas:
     "nome nome email"
@@ -58,10 +58,10 @@ const InputArea = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  padding: 0 10px;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-  height: 40px;
+  padding: 0 0.625rem;
+  border: 0.0625rem solid #bbb;
+  border-radius: 0.313rem;
+  height: 2.5rem;
 `;
 
 const Label = styled.label``;

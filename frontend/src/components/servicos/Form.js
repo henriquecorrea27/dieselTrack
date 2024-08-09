@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 
@@ -104,16 +104,19 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
 
     const servicoData = {
       nome: servico.nome.value,
-      email: servico.descricao.value,
-      email: servico.preco_medio.value,
+      descricao: servico.descricao.value,
+      preco_medio: servico.preco_medio.value,
     };
 
     try {
       if (onEdit) {
-        await axios.put(`http://localhost:8800/${onEdit.id}`, servicoData);
+        await axios.put(
+          `http://localhost:8800/servicos/${onEdit.id_Servico}`,
+          servicoData
+        );
         toast.success("Servico atualizado com sucesso!");
       } else {
-        await axios.post("http://localhost:8800/", servicoData);
+        await axios.post("http://localhost:8800/servicos/", servicoData);
         toast.success("Servico cadastrado com sucesso!");
       }
 

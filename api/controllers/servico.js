@@ -50,7 +50,7 @@ export const updateServico = async (req, res) => {
     await db.beginTransaction();
 
     const q1 =
-      "UPDATE servicos SET `nome` = ?, `descricao` = ?, `preco_medio` = ? WHERE `id` = ?";
+      "UPDATE servicos SET `nome` = ?, `descricao` = ?, `preco_medio` = ? WHERE `id_Servico` = ?";
     const values1 = [nome, descricao, preco_medio, servicoId];
 
     await queryAsync(q1, values1);
@@ -67,7 +67,7 @@ export const updateServico = async (req, res) => {
 export const deleteServico = (req, res) => {
   const servicoId = req.params.id;
 
-  const q = "UPDATE servicos SET status = 'inativo' WHERE id = ?";
+  const q = "UPDATE servicos SET status = 'inativo' WHERE id_Servico = ?";
   db.query(q, [servicoId], (err) => {
     if (err) {
       console.error("Erro ao atualizar status do serviço:", err);

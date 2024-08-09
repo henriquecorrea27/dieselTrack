@@ -146,7 +146,7 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:8800/${id}`);
+      const res = await axios.delete(`http://localhost:8800/clientes/${id}`);
       // Atualiza o status do cliente para inativo
       const updatedClientes = clientes.map((cliente) =>
         cliente.id === id ? { ...cliente, status: "inativo" } : cliente

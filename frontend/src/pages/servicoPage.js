@@ -31,20 +31,25 @@ const CadastroButton = styled.button`
   font-size: 0.938rem;
 `;
 
+const Voltar = styled.img`
+  width: 3%;
+  margin-left: 1.5rem;
+`;
+
 const Title = styled.h2`
   color: #fff;
   margin-left: 1.25rem;
 `;
 
 function App() {
-  const [clientes, setClientes] = useState([]);
+  const [servicos, setServicos] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
-  const getClientes = async () => {
+  const getServicos = async () => {
     try {
-      const res = await axios.get("http://localhost:8800");
-      setClientes(res.data.sort((a, b) => (a.nome > b.nome ? 1 : -1)));
+      const res = await axios.get("http://localhost:8800/servicos/");
+      setServicos(res.data.sort((a, b) => (a.nome > b.nome ? 1 : -1)));
     } catch (error) {
       toast.error(error.message);
     }
@@ -60,23 +65,23 @@ function App() {
   };
 
   useEffect(() => {
-    getClientes();
+    getServicos();
   }, []);
 
   return (
     <>
       <Container>
-        <Title>Serviços</Title>
+        <Voltar src="./assets/voltar.png" alt="Voltar" />
         <Logo src="./assets/logo.png" alt="Logo" />
         <CadastroButton onClick={togglePopup}>Cadastrar Serviço</CadastroButton>
       </Container>
       <Grid
-        clientes={clientes}
-        setClientes={setClientes}
+        servicos={servicos}
+        setServicos={setServicos}
         setOnEdit={handleEdit}
       />
       <Form
-        getClientes={getClientes}
+        getServicos={getServicos}
         onEdit={onEdit}
         setOnEdit={setOnEdit}
         showPopup={showPopup}

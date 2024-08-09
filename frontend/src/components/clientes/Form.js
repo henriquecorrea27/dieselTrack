@@ -230,10 +230,13 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
 
     try {
       if (onEdit) {
-        await axios.put(`http://localhost:8800/${onEdit.id}`, clienteData);
+        await axios.put(
+          `http://localhost:8800/clientes/${onEdit.id}`,
+          clienteData
+        );
         toast.success("Cliente atualizado com sucesso!");
       } else {
-        await axios.post("http://localhost:8800/", clienteData);
+        await axios.post("http://localhost:8800/clientes/", clienteData);
         toast.success("Cliente cadastrado com sucesso!");
       }
 

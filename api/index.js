@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/", clientRoutes); // Rotas de clientes
-app.use("/", serviceRoutes); // Rotas de serviços
+app.use("/clientes", clientRoutes); // Rotas de clientes
+app.use("/servicos", serviceRoutes); // Rotas de serviços
 
 app.listen(8800);

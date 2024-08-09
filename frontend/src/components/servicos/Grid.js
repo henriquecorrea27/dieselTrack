@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Ícones de ação
+import { FaTrash, FaEdit } from "react-icons/fa"; // Ícones de ação
 import { toast } from "react-toastify";
 
 // Container da tabela com rolagem vertical e largura responsiva
@@ -130,12 +130,6 @@ const ConfirmButton = styled.button`
       : "background-color: #ff5e5e;"}
 `;
 
-const DetailsOverlay = styled(ConfirmOverlay)``;
-
-const DetailsBox = styled(ConfirmBox)`
-  text-align: left;
-`;
-
 const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
@@ -145,10 +139,10 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:8800/${id}`);
+      const res = await axios.delete(`http://localhost:8800/servicos/${id}`);
       // Atualiza o status do serviço para inativo
       const updatedServicos = servicos.map((servico) =>
-        servico.id === id ? { ...servico, status: "inativo" } : servico
+        servico.id_Servico === id ? { ...servico, status: "inativo" } : servico
       );
       setServicos(updatedServicos);
       toast.success(res.data);
@@ -208,7 +202,9 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
                     <FaEdit onClick={() => handleEdit(item)} />
                   </Td>
                   <Td alignCenter width="2%">
-                    <FaTrash onClick={() => confirmDeleteServico(item.id)} />
+                    <FaTrash
+                      onClick={() => confirmDeleteServico(item.id_Servico)}
+                    />
                   </Td>
                 </Tr>
               ))}

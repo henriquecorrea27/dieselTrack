@@ -10,7 +10,7 @@ import DetailsModal from "../components/clientes/DetailsModal";
 
 const Container = styled.div`
   width: 100%;
-  max-width: 85vw;
+  max-width: 89vw;
   margin-top: 1.875rem;
   display: flex;
   align-items: center;
@@ -19,6 +19,12 @@ const Container = styled.div`
 
 const Logo = styled.img`
   width: 11%;
+  margin-left: 2rem;
+`;
+
+const Voltar = styled.img`
+  width: 3%;
+  margin-left: 1.5rem;
 `;
 
 const CadastroButton = styled.button`
@@ -34,7 +40,6 @@ const CadastroButton = styled.button`
 
 const Title = styled.h2`
   color: #fff;
-  margin-left: 1.25rem;
 `;
 
 function App() {
@@ -45,7 +50,7 @@ function App() {
 
   const getClientes = async () => {
     try {
-      const res = await axios.get("http://localhost:8800");
+      const res = await axios.get("http://localhost:8800/clientes/");
       setClientes(res.data.sort((a, b) => (a.nome > b.nome ? 1 : -1)));
     } catch (error) {
       toast.error(error.message);
@@ -68,7 +73,7 @@ function App() {
   return (
     <>
       <Container>
-        <Title>CLIENTES</Title>
+        <Voltar src="./assets/voltar.png" alt="Voltar" />
         <Logo src="./assets/logo.png" alt="Logo" />
         <CadastroButton onClick={togglePopup}>Cadastrar Cliente</CadastroButton>
       </Container>

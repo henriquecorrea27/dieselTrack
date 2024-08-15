@@ -3,6 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 import GlobalStyle from "../styles/global";
 import Grid from "../components/clientes/Grid";
 import Form from "../components/clientes/Form";
@@ -70,10 +71,16 @@ function App() {
     getClientes();
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1); // Volta para a página anterior
+  };
+
   return (
     <>
       <Container>
-        <Voltar src="./assets/voltar.png" alt="Voltar" />
+        <Voltar onClick={handleBack} src="./assets/voltar.png" alt="Voltar" />
         <Logo src="./assets/logo.png" alt="Logo" />
         <CadastroButton onClick={togglePopup}>Cadastrar Cliente</CadastroButton>
       </Container>

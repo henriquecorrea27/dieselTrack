@@ -3,13 +3,14 @@ import styled from "styled-components";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 import GlobalStyle from "../styles/global";
 import Grid from "../components/servicos/Grid";
 import Form from "../components/servicos/Form";
 
 const Container = styled.div`
   width: 100%;
-  max-width: 85vw;
+  max-width: 89vw;
   margin-top: 1.875rem;
   display: flex;
   align-items: center;
@@ -18,6 +19,12 @@ const Container = styled.div`
 
 const Logo = styled.img`
   width: 11%;
+  margin-left: 2rem;
+`;
+
+const Voltar = styled.img`
+  width: 3%;
+  margin-left: 1.5rem;
 `;
 
 const CadastroButton = styled.button`
@@ -29,11 +36,6 @@ const CadastroButton = styled.button`
   cursor: pointer;
   font-weight: bold;
   font-size: 0.938rem;
-`;
-
-const Voltar = styled.img`
-  width: 3%;
-  margin-left: 1.5rem;
 `;
 
 const Title = styled.h2`
@@ -68,10 +70,16 @@ function App() {
     getServicos();
   }, []);
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1); // Volta para a página anterior
+  };
+
   return (
     <>
       <Container>
-        <Voltar src="./assets/voltar.png" alt="Voltar" />
+        <Voltar onClick={handleBack} src="./assets/voltar.png" alt="Voltar" />
         <Logo src="./assets/logo.png" alt="Logo" />
         <CadastroButton onClick={togglePopup}>Cadastrar Serviço</CadastroButton>
       </Container>

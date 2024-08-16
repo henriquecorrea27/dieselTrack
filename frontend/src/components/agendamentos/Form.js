@@ -42,12 +42,13 @@ const FormContainer = styled.form`
   padding: 1.25rem 2.5rem 1.25rem 1.25rem;
   box-shadow: 0px 0px 0.313rem #ccc;
   border-radius: 0.313rem;
-  grid-template-columns: 1fr 1fr 1fr; 
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-template-areas: 
-    "nome nome descricao"
-    "preco_medio preco_medio descricao"; 
-}
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "data_inicio data_inicio"
+    "previsao_termino previsao_termino"
+    "cliente cliente"
+    "servico servico"
+    "buttons buttons";
 `;
 
 const InputArea = styled.div`

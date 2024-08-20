@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 const Overlay = styled.div`
   position: fixed;
@@ -97,6 +98,10 @@ const Form = ({
     togglePopup();
   };
 
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), "dd/MM/yyyy");
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,8 +133,8 @@ const Form = ({
       const agendamento = ref.current;
       agendamento.data_inicio.value = onEdit.data_inicio || "";
       agendamento.previsao_termino.value = onEdit.previsao_termino || "";
-      agendamento.cliente.value = onEdit.cliente || "";
-      agendamento.servico.value = onEdit.servico || "";
+      agendamento.cliente.value = onEdit.cliente_id || "";
+      agendamento.servico.value = onEdit.servico_id || "";
     }
   }, [onEdit]);
 
@@ -148,10 +153,10 @@ const Form = ({
     }
 
     const agendamentoData = {
-      data_inicio: agendamento.data_inicio.value,
-      previsao_termino: agendamento.previsao_termino.value,
-      cliente: agendamento.cliente.value,
-      servico: agendamento.servico.value,
+      data_inicio: formatDate(agendamento.data_inicio.value),
+      previsao_termino: formatDate(agendamento.previsao_termino.value),
+      cliente_id: agendamento.cliente.value,
+      servico_id: agendamento.servico.value,
     };
 
     try {
@@ -213,7 +218,7 @@ const Form = ({
             <Select name="servico">
               <option value="">Selecione o Serviço</option>
               {servicos.map((servico) => (
-                <option key={servico.id} value={servico.id}>
+                <option key={servico.id_Servico} value={servico.id_Servico}>
                   {servico.nome}
                 </option>
               ))}

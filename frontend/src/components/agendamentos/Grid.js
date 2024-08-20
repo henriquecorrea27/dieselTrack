@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { FaTrash, FaEdit } from "react-icons/fa"; // Ícones de ação
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 // Container da tabela com rolagem vertical e largura responsiva
 const TableContainer = styled.div`
@@ -142,11 +143,8 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
       const res = await axios.delete(
         `http://localhost:8800/agendamentos/${id}`
       );
-      // Atualiza o status do serviço para inativo
-      const updatedAgendamentos = agendamentos.map((agendamento) =>
-        agendamento.id === id
-          ? { ...agendamento, status: "inativo" }
-          : agendamento
+      const updatedAgendamentos = agendamentos.filter(
+        (agendamento) => agendamento.id !== id
       );
       setAgendamentos(updatedAgendamentos);
       toast.success(res.data);
@@ -159,6 +157,10 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
 
   const confirmDeleteAgendamento = (id) => {
     setConfirmDelete(id);
+  };
+
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), "dd/MM/yyyy");
   };
 
   return (
@@ -196,28 +198,24 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {agendamentos
-              .filter((agendamento) => agendamento.status === "ativo")
-              .map((item, i) => (
-                <Tr key={i}>
-                  <Td width="20%">{item.data_inicio}</Td>
-                  <Td width="20%">{item.previsao_termino}</Td>
-                  <Td width="20%" onlyWeb>
-                    {item.cliente}
-                  </Td>
-                  <Td width="20%" onlyWeb>
-                    {item.servico}
-                  </Td>
-                  <Td alignCenter width="2%">
-                    <FaEdit onClick={() => handleEdit(item)} />
-                  </Td>
-                  <Td alignCenter width="2%">
-                    <FaTrash
-                      onClick={() => confirmDeleteAgendamento(item.id)}
-                    />
-                  </Td>
-                </Tr>
-              ))}
+            {agendamentos.map((item, i) => (
+              <Tr key={i}>
+                <Td width="20%">{formatDate(item.data_inicio)}</Td>
+                <Td width="20%">{formatDate(item.previsao_termino)}</Td>
+                <Td width="20%" onlyWeb>
+                  {item.cliente_nome}
+                </Td>
+                <Td width="20%" onlyWeb>
+                  {item.servico_nome}
+                </Td>
+                <Td alignCenter width="2%">
+                  <FaEdit onClick={() => handleEdit(item)} />
+                </Td>
+                <Td alignCenter width="2%">
+                  <FaTrash onClick={() => confirmDeleteAgendamento(item.id)} />
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
         </Table>
       </TableContainer>

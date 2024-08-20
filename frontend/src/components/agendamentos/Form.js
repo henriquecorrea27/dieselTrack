@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 
@@ -64,13 +64,21 @@ const Input = styled.input`
   height: 2.5rem;
 `;
 
+const Select = styled.select`
+  width: 100%;
+  padding: 0 0.625rem;
+  border: 0.0625rem solid #bbb;
+  border-radius: 0.313rem;
+  height: 2.5rem;
+`;
+
 const Label = styled.label``;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  grid-area: buttons; /* Posiciona este grupo na área de "buttons" */
+  grid-area: buttons;
 `;
 
 const Form = ({
@@ -81,11 +89,39 @@ const Form = ({
   togglePopup,
 }) => {
   const ref = useRef(null);
+  const [clientes, setClientes] = useState([]);
+  const [servicos, setServicos] = useState([]);
 
   const handleClosePopup = () => {
     setOnEdit(null);
     togglePopup();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [clientesResponse, servicosResponse] = await Promise.all([
+          axios.get("http://localhost:8800/clientes"),
+          axios.get("http://localhost:8800/servicos"),
+        ]);
+
+        // Filtra apenas os clientes e serviços com status ativo
+        const clientesAtivos = clientesResponse.data.filter(
+          (cliente) => cliente.status === "ativo"
+        );
+        const servicosAtivos = servicosResponse.data.filter(
+          (servico) => servico.status === "ativo"
+        );
+
+        setClientes(clientesAtivos);
+        setServicos(servicosAtivos);
+      } catch (error) {
+        toast.error("Erro ao carregar clientes ou serviços.");
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (onEdit && ref.current) {
@@ -115,7 +151,7 @@ const Form = ({
       data_inicio: agendamento.data_inicio.value,
       previsao_termino: agendamento.previsao_termino.value,
       cliente: agendamento.cliente.value,
-      cliente: agendamento.servico.value,
+      servico: agendamento.servico.value,
     };
 
     try {
@@ -133,14 +169,13 @@ const Form = ({
         toast.success("Agendamento criado com sucesso!");
       }
 
-      // Clear form fields
       agendamento.data_inicio.value = "";
       agendamento.previsao_termino.value = "";
       agendamento.cliente.value = "";
       agendamento.servico.value = "";
       setOnEdit(null);
       getAgendamentos();
-      togglePopup(); // Fechar o popup após o cadastro
+      togglePopup();
     } catch (error) {
       toast.error("Erro ao salvar agendamento.");
     }
@@ -164,11 +199,25 @@ const Form = ({
           </InputArea>
           <InputArea style={{ gridArea: "cliente" }}>
             <Label>Cliente</Label>
-            <Input name="cliente" type="text" />
+            <Select name="cliente">
+              <option value="">Selecione o Cliente</option>
+              {clientes.map((cliente) => (
+                <option key={cliente.id} value={cliente.id}>
+                  {cliente.nome}
+                </option>
+              ))}
+            </Select>
           </InputArea>
           <InputArea style={{ gridArea: "servico" }}>
             <Label>Serviço</Label>
-            <Input name="servico" type="text" />
+            <Select name="servico">
+              <option value="">Selecione o Serviço</option>
+              {servicos.map((servico) => (
+                <option key={servico.id} value={servico.id}>
+                  {servico.nome}
+                </option>
+              ))}
+            </Select>
           </InputArea>
           <ButtonGroup>
             <Button type="button" variant="close" onClick={handleClosePopup}>

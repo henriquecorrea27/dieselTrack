@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 
@@ -42,12 +42,11 @@ const FormContainer = styled.form`
   padding: 1.25rem 2.5rem 1.25rem 1.25rem;
   box-shadow: 0px 0px 0.313rem #ccc;
   border-radius: 0.313rem;
-  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
-  grid-template-areas: 
+  grid-template-areas:
     "nome nome descricao"
-    "preco_medio preco_medio descricao"; 
-}
+    "preco_medio preco_medio descricao";
 `;
 
 const InputArea = styled.div`
@@ -69,11 +68,12 @@ const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  grid-area: buttons; /* Posiciona este grupo na área de "buttons" */
+  grid-area: buttons;
 `;
 
 const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
   const ref = useRef(null);
+  const [precoMedio, setPrecoMedio] = useState("");
 
   const handleClosePopup = () => {
     setOnEdit(null);
@@ -85,27 +85,50 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
       const servico = ref.current;
       servico.nome.value = onEdit.nome || "";
       servico.descricao.value = onEdit.descricao || "";
-      servico.preco_medio.value = onEdit.preco_medio || "";
+      setPrecoMedio(
+        onEdit.preco_medio ? formatarPreco(onEdit.preco_medio) : ""
+      ); // Initialize with formatted value or empty
+    } else {
+      setPrecoMedio(""); // Reset when adding a new service
     }
   }, [onEdit]);
+
+  const formatarPreco = (value) => {
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue)) {
+      return ""; // Return empty if not a valid number
+    }
+    return `R$ ${numericValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+  };
+
+  const handlePrecoChange = (e) => {
+    let value = e.target.value.replace(/[^\d,]/g, ""); // Allow only numbers and commas
+
+    // Handle backspace correctly and prevent leading zeros
+    if (value === "") {
+      setPrecoMedio("");
+    } else {
+      value = value.replace(",", ".");
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue)) {
+        setPrecoMedio(formatarPreco(numericValue));
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const servico = ref.current;
 
-    if (
-      !servico.nome.value ||
-      !servico.descricao.value ||
-      !servico.preco_medio.value
-    ) {
+    if (!servico.nome.value || !servico.descricao.value || !precoMedio) {
       return toast.warn("Preencha todos os campos!");
     }
 
     const servicoData = {
       nome: servico.nome.value,
       descricao: servico.descricao.value,
-      preco_medio: servico.preco_medio.value,
+      preco_medio: parseFloat(precoMedio.replace(/[R$,\s]/g, "")).toFixed(2),
     };
 
     try {
@@ -114,21 +137,20 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
           `http://localhost:8800/servicos/${onEdit.id_Servico}`,
           servicoData
         );
-        toast.success("Servico atualizado com sucesso!");
+        toast.success("Serviço atualizado com sucesso!");
       } else {
         await axios.post("http://localhost:8800/servicos/", servicoData);
-        toast.success("Servico cadastrado com sucesso!");
+        toast.success("Serviço cadastrado com sucesso!");
       }
 
-      // Clear form fields
       servico.nome.value = "";
       servico.descricao.value = "";
-      servico.preco_medio.value = "";
+      setPrecoMedio("");
       setOnEdit(null);
       getServicos();
-      togglePopup(); // Fechar o popup após o cadastro
+      togglePopup();
     } catch (error) {
-      toast.error("Erro ao salvar servico.");
+      toast.error("Erro ao salvar serviço.");
     }
   };
 
@@ -150,7 +172,13 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
           </InputArea>
           <InputArea style={{ gridArea: "preco_medio" }}>
             <Label>Preço Médio</Label>
-            <Input name="preco_medio" type="number" />
+            <Input
+              name="preco_medio"
+              type="text"
+              value={precoMedio}
+              onChange={handlePrecoChange}
+              placeholder="R$ 0,00" // Optional placeholder
+            />
           </InputArea>
           <ButtonGroup>
             <Button type="button" variant="close" onClick={handleClosePopup}>

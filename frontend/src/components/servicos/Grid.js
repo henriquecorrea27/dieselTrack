@@ -157,6 +157,12 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
     setConfirmDelete(id);
   };
 
+  const formatarPreco = (value) => {
+    if (typeof value !== "number") return value;
+
+    return `R$ ${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+  };
+
   return (
     <>
       {confirmDelete && (
@@ -196,7 +202,7 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
                   <Td width="30%">{item.nome}</Td>
                   <Td width="30%">{item.descricao}</Td>
                   <Td width="20%" onlyWeb>
-                    {item.preco_medio}
+                    {formatarPreco(parseFloat(item.preco_medio))}
                   </Td>
                   <Td alignCenter width="2%">
                     <FaEdit onClick={() => handleEdit(item)} />

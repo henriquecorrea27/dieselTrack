@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
 
 const Overlay = styled.div`
   position: fixed;
@@ -98,10 +97,6 @@ const Form = ({
     togglePopup();
   };
 
-  const formatDate = (dateString) => {
-    return format(new Date(dateString), "dd/MM/yyyy");
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -110,7 +105,6 @@ const Form = ({
           axios.get("http://localhost:8800/servicos"),
         ]);
 
-        // Filtra apenas os clientes e serviços com status ativo
         const clientesAtivos = clientesResponse.data.filter(
           (cliente) => cliente.status === "ativo"
         );
@@ -131,12 +125,49 @@ const Form = ({
   useEffect(() => {
     if (onEdit && ref.current) {
       const agendamento = ref.current;
-      agendamento.data_inicio.value = onEdit.data_inicio || "";
-      agendamento.previsao_termino.value = onEdit.previsao_termino || "";
+
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+
+      agendamento.data_inicio.value = formatDate(onEdit.data_inicio || "");
+      agendamento.previsao_termino.value = formatDate(
+        onEdit.previsao_termino || ""
+      );
       agendamento.cliente.value = onEdit.cliente_id || "";
       agendamento.servico.value = onEdit.servico_id || "";
     }
   }, [onEdit]);
+
+  // Função para validar a data no formato "dd/MM/yyyy"
+  const isValidDate = (dateString) => {
+    const [day, month, year] = dateString.split("/");
+    const date = new Date(`${year}-${month}-${day}`);
+    return (
+      date instanceof Date &&
+      !isNaN(date) &&
+      day > 0 &&
+      day <= 31 &&
+      month > 0 &&
+      month <= 12
+    );
+  };
+
+  const convertDateToISO = (dateString) => {
+    const [day, month, year] = dateString.split("/");
+    return `${year}-${month}-${day}`;
+  };
+
+  const isEndDateAfterStartDate = (startDate, endDate) => {
+    return (
+      new Date(convertDateToISO(endDate)) >
+      new Date(convertDateToISO(startDate))
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,9 +183,32 @@ const Form = ({
       return toast.warn("Preencha todos os campos!");
     }
 
+    if (!isValidDate(agendamento.data_inicio.value)) {
+      return toast.error(
+        "Insira uma data de início válida no formato dd/MM/yyyy."
+      );
+    }
+
+    if (!isValidDate(agendamento.previsao_termino.value)) {
+      return toast.error(
+        "Insira uma data prevista de conclusão válida no formato dd/MM/yyyy."
+      );
+    }
+
+    if (
+      !isEndDateAfterStartDate(
+        agendamento.data_inicio.value,
+        agendamento.previsao_termino.value
+      )
+    ) {
+      return toast.error(
+        "A data de término deve ser maior do que a data de início."
+      );
+    }
+
     const agendamentoData = {
-      data_inicio: formatDate(agendamento.data_inicio.value),
-      previsao_termino: formatDate(agendamento.previsao_termino.value),
+      data_inicio: convertDateToISO(agendamento.data_inicio.value),
+      previsao_termino: convertDateToISO(agendamento.previsao_termino.value),
       cliente_id: agendamento.cliente.value,
       servico_id: agendamento.servico.value,
     };

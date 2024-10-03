@@ -47,7 +47,7 @@ function App() {
   const [clientes, setClientes] = useState([]);
   const [onEdit, setOnEdit] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [viewDetails, setViewDetails] = useState(null); // New state for viewing details
+  const [viewDetails, setViewDetails] = useState(null);
 
   const getClientes = async () => {
     try {
@@ -74,7 +74,7 @@ function App() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1); // Volta para a página anterior
+    navigate(-1);
   };
 
   return (
@@ -88,7 +88,7 @@ function App() {
         clientes={clientes}
         setClientes={setClientes}
         setOnEdit={handleEdit}
-        setViewDetails={setViewDetails} // Pass setViewDetails to Grid
+        setViewDetails={setViewDetails}
       />
       <Form
         getClientes={getClientes}

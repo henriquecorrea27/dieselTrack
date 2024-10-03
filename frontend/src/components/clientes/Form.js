@@ -22,6 +22,9 @@ const PopupContainer = styled.div`
   box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
   width: auto;
   max-width: 90%;
+  padding: 1rem;
+  max-height: 90vh;
+  overflow-y: auto;
 `;
 
 const Button = styled.button`
@@ -70,7 +73,7 @@ const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  grid-area: buttons; /* Posiciona este grupo na área de "buttons" */
+  grid-area: buttons;
 `;
 
 const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {

@@ -4,94 +4,63 @@ import styled from "styled-components";
 import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Ícones de ação
 import { toast } from "react-toastify";
 
-// Container da tabela com rolagem vertical e largura responsiva
 const TableContainer = styled.div`
   width: 85vw;
   height: 70vh;
   max-width: 100%;
   background-color: #fff;
-  padding: 20px;
-  box-shadow: 0px 0px 5px #ccc;
-  border-radius: 5px;
-  margin: 20px;
-  overflow-y: auto; /* Rolagem vertical */
-
-  @media (max-width: 768px) {
-    width: 100vw;
-  }
+  padding: 1.25rem;
+  box-shadow: 0 0 0.3125rem #ccc;
+  border-radius: 0.3125rem;
+  margin: 1.25rem;
+  overflow-y: auto;
 `;
 
-// Estilização da tabela com layout fixo para colunas
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Garante largura fixa para as colunas */
+  table-layout: fixed;
 
   th,
   td {
-    padding: 10px;
+    padding: 0.625rem;
     text-align: left;
-    border: 1px solid #ddd;
+    border: 0.0625rem solid #ddd;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap; /* Evita quebra de linha */
-  }
-
-  thead th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-  }
-
-  tbody tr:hover {
-    background-color: #f9f9f9;
+    white-space: nowrap;
   }
 `;
 
-// Estilização para cabeçalho da tabela
 const Thead = styled.thead`
   display: table;
   width: 100%;
-  table-layout: fixed; /* Garante largura fixa para as colunas */
+  table-layout: fixed;
 `;
 
-// Estilização para corpo da tabela com rolagem vertical
 const Tbody = styled.tbody`
   display: block;
-  overflow-y: auto; /* Permite rolagem vertical */
-  max-height: calc(
-    70vh - 60px
-  ); /* Altura do corpo da tabela, ajustando para incluir padding e cabeçalho */
+  overflow-y: auto;
+  max-height: calc(70vh - 3.75rem);
 `;
 
-// Estilização das linhas da tabela
 const Tr = styled.tr`
   display: table;
   width: 100%;
-  table-layout: fixed; /* Garante largura fixa para as colunas */
+  table-layout: fixed;
 `;
 
-// Estilização das células de cabeçalho
 const Th = styled.th`
   text-align: start;
-  padding-bottom: 5px;
+  padding-bottom: 0.3125rem;
   background-color: #f5f5f5;
-
-  @media (max-width: 500px) {
-    ${(props) => props.onlyWeb && "display: none"}
-  }
 `;
 
-// Estilização das células de dados
 const Td = styled.td`
   text-align: ${(props) => (props.alignCenter ? "center" : "start")};
   width: ${(props) => (props.width ? props.width : "auto")};
-
-  @media (max-width: 500px) {
-    ${(props) => props.onlyWeb && "display: none"}
-  }
 `;
 
-// Estilização da sobreposição para confirmação
 const ConfirmOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -105,22 +74,20 @@ const ConfirmOverlay = styled.div`
   z-index: 1000;
 `;
 
-// Estilização da caixa de confirmação
 const ConfirmBox = styled.div`
   background: white;
   padding: 1.25rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
+  border-radius: 0.3125rem;
+  box-shadow: 0 0 0.3125rem rgba(0, 0, 0, 0.3);
   width: 25%;
   max-width: 90%;
   text-align: center;
 `;
 
-// Estilização dos botões de confirmação
 const ConfirmButton = styled.button`
   padding: 0.625rem;
-  margin: 0.313rem;
-  border-radius: 0.313rem;
+  margin: 0.3125rem;
+  border-radius: 0.3125rem;
   border: none;
   cursor: pointer;
   color: white;

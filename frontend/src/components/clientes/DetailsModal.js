@@ -19,13 +19,15 @@ const ModalContainer = styled.div`
   border-radius: 0.5rem;
   padding: 1.25rem;
   box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 37.5rem;
+  width: 85vw;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
 `;
 
 const Button = styled.button`
   padding: 0.625rem;
-  margin-top: 1.25;
+  margin-top: 1.25rem;
   cursor: pointer;
   border-radius: 0.313rem;
   border: none;
@@ -52,28 +54,25 @@ const DetailsModal = ({ cliente, onClose }) => {
         <p>
           <strong>CPF/CNPJ:</strong> {cliente.cpf_cnpj}
         </p>
-        <>
-          <h3>Endereço</h3>
-          <p>
-            <strong>Rua:</strong> {cliente.rua}
-          </p>
-          <p>
-            <strong>Número:</strong> {cliente.numero}
-          </p>
-          <p>
-            <strong>Bairro:</strong> {cliente.bairro}
-          </p>
-          <p>
-            <strong>Cidade:</strong> {cliente.cidade}
-          </p>
-          <p>
-            <strong>Estado:</strong> {cliente.estado}
-          </p>
-          <p>
-            <strong>CEP:</strong> {cliente.cep}
-          </p>
-        </>
-
+        <h3>Endereço</h3>
+        <p>
+          <strong>Rua:</strong> {cliente.rua}
+        </p>
+        <p>
+          <strong>Número:</strong> {cliente.numero}
+        </p>
+        <p>
+          <strong>Bairro:</strong> {cliente.bairro}
+        </p>
+        <p>
+          <strong>Cidade:</strong> {cliente.cidade}
+        </p>
+        <p>
+          <strong>Estado:</strong> {cliente.estado}
+        </p>
+        <p>
+          <strong>CEP:</strong> {cliente.cep}
+        </p>
         <Button onClick={onClose}>Fechar</Button>
       </ModalContainer>
     </Overlay>

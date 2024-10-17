@@ -1,5 +1,6 @@
 import { db } from "../db.js";
 import { promisify } from "util";
+import nodemailer from "nodemailer";
 
 // Obtém todos os agendamentos
 // Obtém todos os agendamentos
@@ -20,6 +21,35 @@ export const getAgendamento = (_, res) => {
     return res.status(200).json(data);
   });
 };
+
+// Configuração do nodemailer
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "henrique.correia600@gmail.com",
+    pass: "eclp xfpm gazc kdph",
+  },
+});
+
+// Função para enviar email
+function sendAppointmentEmail(clienteEmail, agendamento) {
+  const mailOptions = {
+    from: "henrique.correia600@gmail.com",
+    to: clienteEmail,
+    subject: "Agendamento Confirmado!",
+    text: `Olá, seu agendamento foi feito na data: ${agendamento.data_inicio}.
+Detalhes do serviço: ${agendamento.servico_nome}.
+Previsão de Término: ${agendamento.previsao_termino}.`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Erro ao enviar email:", error);
+    } else {
+      console.log("Email enviado:", info.response);
+    }
+  });
+}
 
 // Adiciona um novo agendamento
 export const addAgendamento = (req, res) => {
@@ -43,19 +73,49 @@ export const addAgendamento = (req, res) => {
       servico_id,
     ];
 
-    db.query(q1, valuesAgendamento, (err) => {
+    db.query(q1, valuesAgendamento, (err, result) => {
       if (err) {
         console.error("Erro ao inserir agendamento:", err);
         return db.rollback(() => res.json(err));
       }
 
-      db.commit((err) => {
+      // Buscando o email do cliente
+      const q2 = "SELECT email FROM clientes WHERE id = ?";
+      db.query(q2, [cliente_id], (err, clienteData) => {
         if (err) {
-          console.error("Erro ao fazer commit da transação:", err);
+          console.error("Erro ao buscar cliente:", err);
           return db.rollback(() => res.json(err));
         }
 
-        return res.status(200).json("Agendamento cadastrado com sucesso.");
+        const clienteEmail = clienteData[0].email;
+
+        // Buscando o nome do serviço
+        const q3 = "SELECT nome FROM servicos WHERE id_Servico = ?";
+        db.query(q3, [servico_id], (err, servicoData) => {
+          if (err) {
+            console.error("Erro ao buscar nome do serviço:", err);
+            return db.rollback(() => res.json(err));
+          }
+
+          const servicoNome = servicoData[0].nome;
+
+          // Commit da transação
+          db.commit((err) => {
+            if (err) {
+              console.error("Erro ao fazer commit da transação:", err);
+              return db.rollback(() => res.json(err));
+            }
+
+            // Enviar o email para o cliente após o commit
+            sendAppointmentEmail(clienteEmail, {
+              data_inicio,
+              servico_nome: servicoNome, // Passar o nome do serviço
+              previsao_termino,
+            });
+
+            return res.status(200).json("Agendamento cadastrado com sucesso.");
+          });
+        });
       });
     });
   });
@@ -106,6 +166,28 @@ export const deleteAgendamento = (req, res) => {
     }
 
     return res.status(200).json("Agendamento excluído com sucesso.");
+  });
+};
+
+export const getAgendamentosByClienteId = (req, res) => {
+  const clienteId = req.params.clienteId;
+
+  const q = `
+    SELECT a.*, s.nome AS servico_nome 
+    FROM agendamentos a
+    JOIN servicos s ON a.servico_id = s.id_Servico
+    WHERE a.cliente_id = ?
+  `;
+
+  db.query(q, [clienteId], (err, data) => {
+    if (err) {
+      console.error("Erro ao buscar agendamentos do cliente:", err);
+      return res
+        .status(500)
+        .json({ error: "Erro ao buscar agendamentos do cliente." });
+    }
+
+    return res.status(200).json(data);
   });
 };
 

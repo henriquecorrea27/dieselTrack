@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios"; // Para fazer as requisições
 
 const Overlay = styled.div`
   position: fixed;
@@ -36,6 +37,18 @@ const Button = styled.button`
 `;
 
 const DetailsModal = ({ cliente, onClose }) => {
+  const [agendamentos, setAgendamentos] = useState([]);
+
+  useEffect(() => {
+    if (cliente) {
+      // Faz a requisição para buscar os agendamentos do cliente
+      axios
+        .get(`/agendamentos/cliente/${cliente.id}`)
+        .then((res) => setAgendamentos(res.data))
+        .catch((err) => console.error("Erro ao buscar agendamentos", err));
+    }
+  }, [cliente]);
+
   if (!cliente) return null;
 
   return (
@@ -73,6 +86,29 @@ const DetailsModal = ({ cliente, onClose }) => {
         <p>
           <strong>CEP:</strong> {cliente.cep}
         </p>
+
+        {/* Exibir agendamentos */}
+        <h3>Agendamentos</h3>
+        {agendamentos.length > 0 ? (
+          agendamentos.map((agendamento) => (
+            <div key={agendamento.id}>
+              <p>
+                <strong>Serviço:</strong> {agendamento.servico_nome}
+              </p>
+              <p>
+                <strong>Data de Início:</strong> {agendamento.data_inicio}
+              </p>
+              <p>
+                <strong>Previsão de Término:</strong>{" "}
+                {agendamento.previsao_termino}
+              </p>
+              <hr />
+            </div>
+          ))
+        ) : (
+          <p>Nenhum agendamento encontrado para este cliente.</p>
+        )}
+
         <Button onClick={onClose}>Fechar</Button>
       </ModalContainer>
     </Overlay>

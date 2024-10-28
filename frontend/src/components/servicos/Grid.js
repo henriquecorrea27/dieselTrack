@@ -185,9 +185,8 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
         <Table>
           <Thead>
             <Tr>
-              <Th width="30%">Nome</Th>
-              <Th width="30%">Descrição</Th>
-              <Th onlyWeb width="20%">
+              <Th width="50%">Nome</Th>
+              <Th onlyWeb width="30%">
                 Preço Médio
               </Th>
               <Th width="2%"></Th>
@@ -199,9 +198,8 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
               .filter((servico) => servico.status === "ativo")
               .map((item, i) => (
                 <Tr key={i}>
-                  <Td width="30%">{item.nome}</Td>
-                  <Td width="30%">{item.descricao}</Td>
-                  <Td width="20%" onlyWeb>
+                  <Td width="50%">{item.nome}</Td>
+                  <Td width="30%" onlyWeb>
                     {formatarPreco(parseFloat(item.preco_medio))}
                   </Td>
                   <Td alignCenter width="2%">

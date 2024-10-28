@@ -84,7 +84,6 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
     if (onEdit && ref.current) {
       const servico = ref.current;
       servico.nome.value = onEdit.nome || "";
-      servico.descricao.value = onEdit.descricao || "";
       setPrecoMedio(
         onEdit.preco_medio ? formatarPreco(onEdit.preco_medio) : ""
       ); // Initialize with formatted value or empty
@@ -121,13 +120,12 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
 
     const servico = ref.current;
 
-    if (!servico.nome.value || !servico.descricao.value || !precoMedio) {
+    if (!servico.nome.value || !precoMedio) {
       return toast.warn("Preencha todos os campos!");
     }
 
     const servicoData = {
       nome: servico.nome.value,
-      descricao: servico.descricao.value,
       preco_medio: parseFloat(precoMedio.replace(/[R$,\s]/g, "")).toFixed(2),
     };
 
@@ -144,7 +142,6 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
       }
 
       servico.nome.value = "";
-      servico.descricao.value = "";
       setPrecoMedio("");
       setOnEdit(null);
       getServicos();
@@ -165,10 +162,6 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
           <InputArea style={{ gridArea: "nome" }}>
             <Label>Nome</Label>
             <Input name="nome" />
-          </InputArea>
-          <InputArea style={{ gridArea: "descricao" }}>
-            <Label>Descrição</Label>
-            <Input name="descricao" type="text" />
           </InputArea>
           <InputArea style={{ gridArea: "preco_medio" }}>
             <Label>Preço Médio</Label>

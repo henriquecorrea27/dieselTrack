@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAgendamento);
-router.get("/cliente/:clienteId", getAgendamentosByClienteId);
+router.get("/:clienteId", getAgendamentosByClienteId);
 router.post("/", addAgendamento);
 router.put("/:id", updateAgendamento);
 router.delete("/:id", deleteAgendamento);

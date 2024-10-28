@@ -12,7 +12,7 @@ export const getServico = (_, res) => {
 };
 
 export const addServico = (req, res) => {
-  const { nome, descricao, preco_medio } = req.body;
+  const { nome, preco_medio } = req.body;
 
   db.beginTransaction((err) => {
     if (err) {
@@ -20,9 +20,8 @@ export const addServico = (req, res) => {
       return res.json(err);
     }
 
-    const q1 =
-      "INSERT INTO servicos (`nome`, `descricao`, `preco_medio`) VALUES (?, ?, ?)";
-    const valuesServicos = [nome, descricao, preco_medio];
+    const q1 = "INSERT INTO servicos (`nome`, `preco_medio`) VALUES (?, ?)";
+    const valuesServicos = [nome, preco_medio];
 
     db.query(q1, valuesServicos, (err) => {
       if (err) {
@@ -43,15 +42,15 @@ export const addServico = (req, res) => {
 };
 
 export const updateServico = async (req, res) => {
-  const { nome, descricao, preco_medio } = req.body;
+  const { nome, preco_medio } = req.body;
   const servicoId = req.params.id;
 
   try {
     await db.beginTransaction();
 
     const q1 =
-      "UPDATE servicos SET `nome` = ?, `descricao` = ?, `preco_medio` = ? WHERE `id_Servico` = ?";
-    const values1 = [nome, descricao, preco_medio, servicoId];
+      "UPDATE servicos SET `nome` = ?, `preco_medio` = ? WHERE `id_Servico` = ?";
+    const values1 = [nome, preco_medio, servicoId];
 
     await queryAsync(q1, values1);
 

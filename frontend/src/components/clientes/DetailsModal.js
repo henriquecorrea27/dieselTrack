@@ -87,7 +87,6 @@ const DetailsModal = ({ cliente, onClose }) => {
           <strong>CEP:</strong> {cliente.cep}
         </p>
 
-        {/* Exibir agendamentos */}
         <h3>Agendamentos</h3>
         {agendamentos.length > 0 ? (
           agendamentos.map((agendamento) => (
@@ -99,8 +98,7 @@ const DetailsModal = ({ cliente, onClose }) => {
                 <strong>Data de Início:</strong> {agendamento.data_inicio}
               </p>
               <p>
-                <strong>Previsão de Término:</strong>{" "}
-                {agendamento.previsao_termino}
+                <strong>Data de Término:</strong> {agendamento.data_termino}
               </p>
               <hr />
             </div>

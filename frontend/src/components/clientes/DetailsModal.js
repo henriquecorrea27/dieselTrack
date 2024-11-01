@@ -20,7 +20,7 @@ const ModalContainer = styled.div`
   border-radius: 0.5rem;
   padding: 1.25rem;
   box-shadow: 0 0.313rem 0.938rem rgba(0, 0, 0, 0.3);
-  width: 85vw;
+  width: 65vw;
   max-width: 600px;
   max-height: 80vh;
   overflow-y: auto;
@@ -43,7 +43,7 @@ const DetailsModal = ({ cliente, onClose }) => {
     if (cliente) {
       // Faz a requisição para buscar os agendamentos do cliente
       axios
-        .get(`/agendamentos/cliente/${cliente.id}`)
+        .get(`/clientes/${cliente.id}`)
         .then((res) => setAgendamentos(res.data))
         .catch((err) => console.error("Erro ao buscar agendamentos", err));
     }

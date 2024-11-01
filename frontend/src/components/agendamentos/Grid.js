@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit } from "react-icons/fa"; // Ícones de ação
+import { FaTrash, FaEdit, FaCheck } from "react-icons/fa"; // Ícones de ação
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 
@@ -155,6 +155,25 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
     }
   };
 
+  const completeService = async (id) => {
+    try {
+      const currentDate = new Date().toISOString().split("T")[0];
+      await axios.put(`http://localhost:8800/agendamentos/concluir/${id}`, {
+        data_termino: currentDate,
+      });
+
+      const updatedAgendamentos = agendamentos.map((agendamento) =>
+        agendamento.id === id
+          ? { ...agendamento, data_termino: currentDate }
+          : agendamento
+      );
+      setAgendamentos(updatedAgendamentos);
+      toast.success("Serviço concluído com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao concluir o serviço.");
+    }
+  };
+
   const confirmDeleteAgendamento = (id) => {
     setConfirmDelete(id);
   };
@@ -193,13 +212,16 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
               <Th onlyWeb width="20%">
                 Serviço
               </Th>
+              <Th width="2%">Concluir</Th>
               <Th width="2%"></Th>
               <Th width="2%"></Th>
             </Tr>
           </Thead>
           <Tbody>
             {agendamentos.map((item, i) => (
-              <Tr key={i}>
+              <Tr key={i} isCompleted={item.data_termino}>
+                {" "}
+                {/* Define o estilo da linha conforme o status */}
                 <Td width="20%">{formatDate(item.data_inicio)}</Td>
                 <Td width="20%">{formatDate(item.previsao_termino)}</Td>
                 <Td width="20%" onlyWeb>
@@ -209,10 +231,31 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
                   {item.servico_nome}
                 </Td>
                 <Td alignCenter width="2%">
-                  <FaEdit onClick={() => handleEdit(item)} />
+                  <FaCheck
+                    onClick={() => completeService(item.id)}
+                    style={{
+                      pointerEvents: item.data_termino ? "none" : "auto",
+                      opacity: item.data_termino ? "0.3" : "1",
+                    }}
+                  />
                 </Td>
                 <Td alignCenter width="2%">
-                  <FaTrash onClick={() => confirmDeleteAgendamento(item.id)} />
+                  <FaEdit
+                    onClick={() => handleEdit(item)}
+                    style={{
+                      pointerEvents: item.data_termino ? "none" : "auto",
+                      opacity: item.data_termino ? "0.3" : "1",
+                    }}
+                  />
+                </Td>
+                <Td alignCenter width="2%">
+                  <FaTrash
+                    onClick={() => confirmDeleteAgendamento(item.id)}
+                    style={{
+                      pointerEvents: item.data_termino ? "none" : "auto",
+                      opacity: item.data_termino ? "0.3" : "1",
+                    }}
+                  />
                 </Td>
               </Tr>
             ))}

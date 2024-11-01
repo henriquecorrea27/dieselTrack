@@ -51,6 +51,23 @@ Previsão de Término: ${agendamento.previsao_termino}.`,
   });
 }
 
+function sendCompletionEmail(clienteEmail, agendamento) {
+  const mailOptions = {
+    from: "henrique.correia600@gmail.com",
+    to: clienteEmail,
+    subject: "Serviço Concluído!",
+    text: `Olá, informamos que o serviço foi concluído na data ${agendamento.data_termino}. Obrigado por contar conosco!`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Erro ao enviar email de conclusão:", error);
+    } else {
+      console.log("Email de conclusão enviado:", info.response);
+    }
+  });
+}
+
 // Adiciona um novo agendamento
 export const addAgendamento = (req, res) => {
   const { data_inicio, previsao_termino, cliente_id, servico_id } = req.body;
@@ -169,25 +186,39 @@ export const deleteAgendamento = (req, res) => {
   });
 };
 
-export const getAgendamentosByClienteId = (req, res) => {
-  const clienteId = req.params.clienteId;
+export const completeAgendamento = (req, res) => {
+  const agendamentoId = req.params.id;
+  const currentDate = new Date().toISOString().split("T")[0]; // Obter data atual no formato "YYYY-MM-DD"
+  const q =
+    "UPDATE agendamentos SET status = 'concluido', data_termino = ? WHERE id = ?";
 
-  const q = `
-    SELECT a.*, s.nome AS servico_nome 
-    FROM agendamentos a
-    JOIN servicos s ON a.servico_id = s.id_Servico
-    WHERE a.cliente_id = ?
-  `;
-
-  db.query(q, [clienteId], (err, data) => {
+  db.query(q, [currentDate, agendamentoId], (err) => {
     if (err) {
-      console.error("Erro ao buscar agendamentos do cliente:", err);
-      return res
-        .status(500)
-        .json({ error: "Erro ao buscar agendamentos do cliente." });
+      console.error("Erro ao concluir agendamento:", err);
+      return res.status(500).json({ error: "Erro ao concluir agendamento." });
     }
 
-    return res.status(200).json(data);
+    const q2 = `
+      SELECT c.email, s.nome AS servico_nome 
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+      JOIN servicos s ON a.servico_id = s.id_Servico
+      WHERE a.id = ?
+    `;
+    db.query(q2, [agendamentoId], (err, result) => {
+      if (err) {
+        console.error("Erro ao buscar dados do cliente e serviço:", err);
+        return res.status(500).json({ error: "Erro ao buscar dados." });
+      }
+
+      const { email: clienteEmail, servico_nome } = result[0];
+      sendCompletionEmail(clienteEmail, {
+        servico_nome,
+        data_termino: currentDate,
+      });
+
+      return res.status(200).json("Agendamento marcado como concluído.");
+    });
   });
 };
 

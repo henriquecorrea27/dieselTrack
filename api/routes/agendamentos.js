@@ -4,15 +4,15 @@ import {
   deleteAgendamento,
   getAgendamento,
   updateAgendamento,
-  getAgendamentosByClienteId,
+  completeAgendamento,
 } from "../controllers/agendamento.js";
 
 const router = express.Router();
 
 router.get("/", getAgendamento);
-router.get("/:clienteId", getAgendamentosByClienteId);
 router.post("/", addAgendamento);
 router.put("/:id", updateAgendamento);
+router.put("/concluir/:id", completeAgendamento);
 router.delete("/:id", deleteAgendamento);
 
 export default router;

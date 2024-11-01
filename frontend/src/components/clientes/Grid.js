@@ -101,6 +101,9 @@ const DetailsOverlay = styled(ConfirmOverlay)``;
 
 const DetailsBox = styled(ConfirmBox)`
   text-align: left;
+  width: 60vw;
+  ma-height: 80vh;
+  overflow-y: auto;
 `;
 
 const Grid = ({ clientes = [], setClientes, setOnEdit }) => {

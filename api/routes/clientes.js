@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 router.get("/", getCliente);
-router.get("/clientes/:id", getAgendamentosCliente);
+router.get("/:id", getAgendamentosCliente);
 router.post("/", addCliente);
 router.put("/:id", updateCliente);
 router.delete("/:id", deleteCliente);

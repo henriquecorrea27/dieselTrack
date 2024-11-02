@@ -56,7 +56,7 @@ function sendCompletionEmail(clienteEmail, agendamento) {
     from: "henrique.correia600@gmail.com",
     to: clienteEmail,
     subject: "Serviço Concluído!",
-    text: `Olá, informamos que o serviço foi concluído na data ${agendamento.data_termino}. Obrigado por contar conosco!`,
+    text: `Olá, informamos que o serviço ${agendamento.servico_nome} foi concluído na data ${agendamento.data_termino}. Obrigado por contar conosco!`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {

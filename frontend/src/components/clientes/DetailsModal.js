@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import axios from "axios"; // Para fazer as requisições
 
 const Overlay = styled.div`
   position: fixed;
@@ -37,18 +36,6 @@ const Button = styled.button`
 `;
 
 const DetailsModal = ({ cliente, onClose }) => {
-  const [agendamentos, setAgendamentos] = useState([]);
-
-  useEffect(() => {
-    if (cliente) {
-      // Faz a requisição para buscar os agendamentos do cliente
-      axios
-        .get(`/clientes/${cliente.id}`)
-        .then((res) => setAgendamentos(res.data))
-        .catch((err) => console.error("Erro ao buscar agendamentos", err));
-    }
-  }, [cliente]);
-
   if (!cliente) return null;
 
   return (
@@ -88,17 +75,17 @@ const DetailsModal = ({ cliente, onClose }) => {
         </p>
 
         <h3>Agendamentos</h3>
-        {agendamentos.length > 0 ? (
-          agendamentos.map((agendamento) => (
+        {cliente.agendamentos.length > 0 ? (
+          cliente.agendamentos.map((agendamento) => (
             <div key={agendamento.id}>
               <p>
-                <strong>Serviço:</strong> {agendamento.servico_nome}
+                <strong>Serviço:</strong> {agendamento.nome}
               </p>
               <p>
-                <strong>Data de Início:</strong> {agendamento.data_inicio}
+                <strong>Data Ínicio:</strong> {agendamento.data_inicio}
               </p>
               <p>
-                <strong>Data de Término:</strong> {agendamento.data_termino}
+                <strong>Data Término:</strong> {agendamento.data_termino}
               </p>
               <hr />
             </div>

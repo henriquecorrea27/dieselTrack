@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash, FaEdit, FaEye } from "react-icons/fa"; // Ícones de ação
+import { FaTrash, FaEdit, FaEye } from "react-icons/fa";
 import { toast } from "react-toastify";
+import DetailsModal from "./DetailsModal";
 
 const TableContainer = styled.div`
   width: 85vw;
@@ -117,7 +118,6 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(`http://localhost:8800/clientes/${id}`);
-      // Atualiza o status do cliente para inativo
       const updatedClientes = clientes.map((cliente) =>
         cliente.id === id ? { ...cliente, status: "inativo" } : cliente
       );
@@ -134,43 +134,31 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
     setConfirmDelete(id);
   };
 
-  const viewClientDetails = (cliente) => {
-    setViewDetails(cliente);
+  const viewClientDetails = async (cliente) => {
+    try {
+      const { data: agendamentos } = await axios.get(
+        `http://localhost:8800/clientes/${cliente.id}`
+      );
+      setViewDetails({ ...cliente, agendamentos });
+    } catch (error) {
+      toast.error("Erro ao buscar agendamentos.");
+      console.error("Erro ao buscar agendamentos", error);
+    }
   };
 
-  const formatCpfCnpj = (value) => {
-    value = value.replace(/\D/g, ""); // Remove non-numeric characters
-
-    if (value.length <= 11) {
-      // CPF formatting
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    } else {
-      // CNPJ formatting
-      value = value.replace(/^(\d{2})(\d)/, "$1.$2");
-      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-      value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
-      value = value.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
-    }
-
-    return value;
+  const formatTelefone = (telefone) => {
+    // Formatação de telefone (exemplo)
+    return telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   };
 
-  const formatTelefone = (value) => {
-    value = value.replace(/\D/g, ""); // Remove non-numeric characters
-
-    if (value.length > 11) {
-      value = value.slice(0, 11); // Limit to 11 digits
-    }
-
-    if (value.length === 11) {
-      value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-    } else if (value.length === 10) {
-      value = value.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-    }
-
-    return value;
+  const formatCpfCnpj = (cpf_cnpj) => {
+    // Formatação de CPF/CNPJ (exemplo)
+    return cpf_cnpj.length === 11
+      ? cpf_cnpj.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+      : cpf_cnpj.replace(
+          /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+          "$1.$2.$3/$4-$5"
+        );
   };
 
   return (
@@ -192,46 +180,10 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
         </ConfirmOverlay>
       )}
       {viewDetails && (
-        <DetailsOverlay onClick={() => setViewDetails(null)}>
-          <DetailsBox onClick={(e) => e.stopPropagation()}>
-            <h2>Detalhes do Cliente</h2>
-            <p>
-              <strong>Nome:</strong> {viewDetails.nome}
-            </p>
-            <p>
-              <strong>Email:</strong> {viewDetails.email}
-            </p>
-            <p>
-              <strong>Telefone:</strong> {formatTelefone(viewDetails.telefone)}
-            </p>
-            <p>
-              <strong>CPF/CNPJ:</strong> {formatCpfCnpj(viewDetails.cpf_cnpj)}
-            </p>
-
-            <p>
-              <strong>Rua</strong>: {viewDetails.rua}
-            </p>
-            <p>
-              <strong>Número</strong>: {viewDetails.numero}
-            </p>
-            <p>
-              <strong>Bairro</strong>: {viewDetails.bairro}
-            </p>
-            <p>
-              <strong>Cidade</strong>: {viewDetails.cidade}
-            </p>
-            <p>
-              <strong>Estado</strong>: {viewDetails.estado}
-            </p>
-            <p>
-              <strong>CEP</strong>: {viewDetails.cep}
-            </p>
-
-            <ConfirmButton variant="no" onClick={() => setViewDetails(null)}>
-              Fechar
-            </ConfirmButton>
-          </DetailsBox>
-        </DetailsOverlay>
+        <DetailsModal
+          cliente={viewDetails}
+          onClose={() => setViewDetails(null)}
+        />
       )}
       <TableContainer>
         <Table>

@@ -42,11 +42,11 @@ const FormContainer = styled.form`
   padding: 1.25rem 2.5rem 1.25rem 1.25rem;
   box-shadow: 0px 0px 0.313rem #ccc;
   border-radius: 0.313rem;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "nome nome descricao"
-    "preco_medio preco_medio descricao";
+    "nome nome"
+    "preco_medio preco_medio"
+    "buttons buttons";
 `;
 
 const InputArea = styled.div`
@@ -101,18 +101,20 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
   };
 
   const handlePrecoChange = (e) => {
-    let value = e.target.value.replace(/[^\d,]/g, ""); // Allow only numbers and commas
+    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for dígito
 
-    // Handle backspace correctly and prevent leading zeros
-    if (value === "") {
-      setPrecoMedio("");
-    } else {
-      value = value.replace(",", ".");
-      const numericValue = parseFloat(value);
-      if (!isNaN(numericValue)) {
-        setPrecoMedio(formatarPreco(numericValue));
-      }
+    // Limita o número de dígitos a no máximo 7
+    if (value.length > 7) {
+      value = value.slice(0, 7);
     }
+
+    // Insere a vírgula para separar os centavos
+    const formattedValue =
+      value.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+      "," +
+      value.slice(-2);
+
+    setPrecoMedio(`R$ ${formattedValue}`);
   };
 
   const handleSubmit = async (e) => {
@@ -126,7 +128,13 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
 
     const servicoData = {
       nome: servico.nome.value,
-      preco_medio: parseFloat(precoMedio.replace(/[R$,\s]/g, "")).toFixed(2),
+      preco_medio: parseFloat(
+        precoMedio
+          .replace("R$", "") // Remove o prefixo "R$"
+          .replace(/\./g, "") // Remove os pontos de separação de milhar
+          .replace(",", ".") // Substitui a vírgula decimal por ponto
+          .trim() // Remove espaços em branco extras
+      ).toFixed(2),
     };
 
     try {
@@ -161,7 +169,15 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
         <FormContainer ref={ref} onSubmit={handleSubmit}>
           <InputArea style={{ gridArea: "nome" }}>
             <Label>Nome</Label>
-            <Input name="nome" />
+            <Input
+              name="nome"
+              maxLength={200} // Limita a entrada para no máximo 200 caracteres
+              onInput={(e) => {
+                if (e.target.value.length > 200) {
+                  e.target.value = e.target.value.slice(0, 200); // Garante que não exceda 200 caracteres
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "preco_medio" }}>
             <Label>Preço Médio</Label>

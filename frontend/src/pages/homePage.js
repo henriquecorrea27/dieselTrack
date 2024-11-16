@@ -53,6 +53,7 @@ const Button = styled.button`
   font-size: 16px;
   border-radius: 20px;
   cursor: pointer;
+  height: 550px;
 
   img {
     height: 500px;
@@ -86,7 +87,7 @@ const HomePage = () => {
         </Button>
         <Button onClick={() => (window.location.href = "/agendamentos")}>
           Agendamentos
-          <img src="./assets/agendamentos.png" alt="Agendamentos Icon" />
+          <img src="./assets/calendario.jpg" alt="Agendamentos Icon" />
         </Button>
       </Container>
     </>

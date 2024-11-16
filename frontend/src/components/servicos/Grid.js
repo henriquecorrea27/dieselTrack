@@ -158,9 +158,11 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
   };
 
   const formatarPreco = (value) => {
-    if (typeof value !== "number") return value;
-
-    return `R$ ${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+    if (isNaN(value) || value === null) return "R$ 0,00"; // Valor padrão para dados inválidos
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
   return (
@@ -200,7 +202,7 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
                 <Tr key={i}>
                   <Td width="50%">{item.nome}</Td>
                   <Td width="30%" onlyWeb>
-                    {formatarPreco(parseFloat(item.preco_medio))}
+                    {formatarPreco(item.preco_medio)}
                   </Td>
                   <Td alignCenter width="2%">
                     <FaEdit onClick={() => handleEdit(item)} />

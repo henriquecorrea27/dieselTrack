@@ -171,10 +171,10 @@ const Form = ({ getServicos, onEdit, setOnEdit, showPopup, togglePopup }) => {
             <Label>Nome</Label>
             <Input
               name="nome"
-              maxLength={200} // Limita a entrada para no máximo 200 caracteres
+              maxLength={200}
               onInput={(e) => {
                 if (e.target.value.length > 200) {
-                  e.target.value = e.target.value.slice(0, 200); // Garante que não exceda 200 caracteres
+                  e.target.value = e.target.value.slice(0, 200);
                 }
               }}
             />

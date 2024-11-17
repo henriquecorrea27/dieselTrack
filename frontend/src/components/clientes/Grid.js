@@ -98,18 +98,19 @@ const ConfirmButton = styled.button`
       : "background-color: #ff5e5e;"}
 `;
 
-const DetailsOverlay = styled(ConfirmOverlay)``;
-
-const DetailsBox = styled(ConfirmBox)`
-  text-align: left;
-  width: 60vw;
-  ma-height: 80vh;
-  overflow-y: auto;
+const SearchBar = styled.input`
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
 `;
 
 const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [viewDetails, setViewDetails] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleEdit = (item) => {
     setOnEdit(item);
@@ -147,12 +148,10 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
   };
 
   const formatTelefone = (telefone) => {
-    // Formatação de telefone (exemplo)
     return telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   };
 
   const formatCpfCnpj = (cpf_cnpj) => {
-    // Formatação de CPF/CNPJ (exemplo)
     return cpf_cnpj.length === 11
       ? cpf_cnpj.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
       : cpf_cnpj.replace(
@@ -160,6 +159,14 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
           "$1.$2.$3/$4-$5"
         );
   };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredClientes = clientes.filter((cliente) =>
+    cliente.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <>
@@ -186,6 +193,12 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
         />
       )}
       <TableContainer>
+        <SearchBar
+          type="text"
+          placeholder="Pesquisar clientes..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
         <Table>
           <Thead>
             <Tr>
@@ -203,7 +216,7 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {clientes
+            {filteredClientes
               .filter((cliente) => cliente.status === "ativo")
               .map((item, i) => (
                 <Tr key={i}>

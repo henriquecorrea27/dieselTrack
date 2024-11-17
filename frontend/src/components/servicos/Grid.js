@@ -21,6 +21,15 @@ const TableContainer = styled.div`
   }
 `;
 
+const SearchBar = styled.input`
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+`;
+
 // Estilização da tabela com layout fixo para colunas
 const Table = styled.table`
   width: 100%;
@@ -133,6 +142,8 @@ const ConfirmButton = styled.button`
 const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleEdit = (item) => {
     setOnEdit(item);
   };
@@ -165,6 +176,14 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
     });
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredServicos = servicos.filter((servico) =>
+    servico.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       {confirmDelete && (
@@ -184,6 +203,12 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
         </ConfirmOverlay>
       )}
       <TableContainer>
+        <SearchBar
+          type="text"
+          placeholder="Pesquisar serviços..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
         <Table>
           <Thead>
             <Tr>
@@ -196,7 +221,7 @@ const Grid = ({ servicos = [], setServicos, setOnEdit }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {servicos
+            {filteredServicos
               .filter((servico) => servico.status === "ativo")
               .map((item, i) => (
                 <Tr key={i}>

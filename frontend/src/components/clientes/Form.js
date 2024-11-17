@@ -83,7 +83,8 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
 
   const handleClosePopup = () => {
     setOnEdit(null);
-    setTelefone(""); // Limpar o estado onEdit ao fechar o popup
+    setTelefone("");
+    setCep("");
     togglePopup();
   };
 
@@ -273,11 +274,28 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
         <FormContainer ref={ref} onSubmit={handleSubmit}>
           <InputArea style={{ gridArea: "nome" }}>
             <Label>Nome</Label>
-            <Input name="nome" />
+            <Input
+              name="nome"
+              maxLength={255}
+              onInput={(e) => {
+                if (e.target.value.length > 255) {
+                  e.target.value = e.target.value.slice(0, 255);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "email" }}>
             <Label>E-mail</Label>
-            <Input name="email" type="email" />
+            <Input
+              name="email"
+              type="email"
+              maxLength={255}
+              onInput={(e) => {
+                if (e.target.value.length > 255) {
+                  e.target.value = e.target.value.slice(0, 255);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "telefone" }}>
             <Label>Telefone</Label>
@@ -299,15 +317,40 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
           </InputArea>
           <InputArea style={{ gridArea: "rua" }}>
             <Label>Rua</Label>
-            <Input name="rua" />
+            <Input
+              name="rua"
+              maxLength={255}
+              onInput={(e) => {
+                if (e.target.value.length > 255) {
+                  e.target.value = e.target.value.slice(0, 255);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "numero" }}>
             <Label>Número</Label>
-            <Input name="numero" />
+            <Input
+              name="numero"
+              type="number"
+              maxLength={10}
+              onInput={(e) => {
+                if (e.target.value.length > 10) {
+                  e.target.value = e.target.value.slice(0, 10);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "bairro" }}>
             <Label>Bairro</Label>
-            <Input name="bairro" />
+            <Input
+              name="bairro"
+              maxLength={100}
+              onInput={(e) => {
+                if (e.target.value.length > 100) {
+                  e.target.value = e.target.value.slice(0, 100);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "cep" }}>
             <Label>CEP</Label>
@@ -320,11 +363,27 @@ const Form = ({ getClientes, onEdit, setOnEdit, showPopup, togglePopup }) => {
           </InputArea>
           <InputArea style={{ gridArea: "cidade" }}>
             <Label>Cidade</Label>
-            <Input name="cidade" />
+            <Input
+              name="cidade"
+              maxLength={100}
+              onInput={(e) => {
+                if (e.target.value.length > 100) {
+                  e.target.value = e.target.value.slice(0, 100);
+                }
+              }}
+            />
           </InputArea>
           <InputArea style={{ gridArea: "estado" }}>
             <Label>Estado</Label>
-            <Input name="estado" />
+            <Input
+              name="estado"
+              maxLength={50}
+              onInput={(e) => {
+                if (e.target.value.length > 50) {
+                  e.target.value = e.target.value.slice(0, 50);
+                }
+              }}
+            />
           </InputArea>
           <ButtonGroup>
             <Button type="button" variant="close" onClick={handleClosePopup}>

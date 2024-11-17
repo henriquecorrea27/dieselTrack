@@ -35,6 +35,15 @@ const Button = styled.button`
   background-color: #2c73d2;
 `;
 
+const formatarData = (data) => {
+  const dateObj = new Date(data);
+  return dateObj.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
 const DetailsModal = ({ cliente, onClose }) => {
   if (!cliente) return null;
 
@@ -79,14 +88,18 @@ const DetailsModal = ({ cliente, onClose }) => {
           cliente.agendamentos.map((agendamento) => (
             <div key={agendamento.id}>
               <p>
-                <strong>Serviço:</strong> {agendamento.nome}
+                <strong>Serviço:</strong> {agendamento.nome_servico}
+              </p>
+
+              <p>
+                <strong>Data Ínicio:</strong>{" "}
+                {formatarData(agendamento.data_inicio)}
               </p>
               <p>
-                <strong>Data Ínicio:</strong> {agendamento.data_inicio}
+                <strong>Data Término:</strong>{" "}
+                {formatarData(agendamento.data_termino)}
               </p>
-              <p>
-                <strong>Data Término:</strong> {agendamento.data_termino}
-              </p>
+
               <hr />
             </div>
           ))

@@ -60,6 +60,43 @@ const formatarData = (data) => {
   });
 };
 
+const formatarTelefone = (value) => {
+  value = value.replace(/\D/g, "");
+  if (value.length > 11) {
+    value = value.slice(0, 11);
+  }
+  if (value.length === 11) {
+    value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1)$2-$3");
+  } else if (value.length === 10) {
+    value = value.replace(/(\d{2})(\d{4})(\d{4})/, "($1)$2-$3");
+  }
+  return value;
+};
+
+const formatarCpfCnpj = (value) => {
+  value = value.replace(/\D/g, "");
+  if (value.length <= 11) {
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d)/, "$1.$2");
+    value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  } else {
+    value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+    value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+    value = value.replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  }
+  return value;
+};
+
+const formatarCep = (value) => {
+  value = value.replace(/\D/g, "");
+  if (value.length > 8) {
+    value = value.slice(0, 8);
+  }
+  value = value.replace(/(\d{2})(\d{3})(\d{3})/, "$1.$2-$3");
+  return value;
+};
+
 const DetailsModal = ({ cliente, onClose }) => {
   if (!cliente) return null;
 
@@ -75,10 +112,10 @@ const DetailsModal = ({ cliente, onClose }) => {
             <strong>Email:</strong> {cliente.email}
           </p>
           <p>
-            <strong>Telefone:</strong> {cliente.telefone}
+            <strong>Telefone:</strong> {formatarTelefone(cliente.telefone)}
           </p>
           <p>
-            <strong>CPF/CNPJ:</strong> {cliente.cpf_cnpj}
+            <strong>CPF/CNPJ:</strong> {formatarCpfCnpj(cliente.cpf_cnpj)}
           </p>
           <h3>Endereço</h3>
           <p>
@@ -97,7 +134,7 @@ const DetailsModal = ({ cliente, onClose }) => {
             <strong>Estado:</strong> {cliente.estado}
           </p>
           <p>
-            <strong>CEP:</strong> {cliente.cep}
+            <strong>CEP:</strong> {formatarCep(cliente.cep)}
           </p>
 
           <h3>Agendamentos</h3>

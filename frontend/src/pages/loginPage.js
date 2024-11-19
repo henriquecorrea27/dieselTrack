@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Importando ícones de olho
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const GlobalStyle = createGlobalStyle`
   * {

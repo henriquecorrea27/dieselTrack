@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 import { promisify } from "util";
-// No método getCliente
-export const getCliente = (_, res) => {
+
+export const listar_clientes = (_, res) => {
   const q =
     "SELECT c.*, e.* FROM clientes c LEFT JOIN endereco e ON c.id_endereco = e.id_endereco";
 
@@ -12,7 +12,7 @@ export const getCliente = (_, res) => {
   });
 };
 
-export const addCliente = (req, res) => {
+export const criar_cliente = (req, res) => {
   const { nome, email, telefone, cpf_cnpj, endereco } = req.body;
 
   db.beginTransaction((err) => {
@@ -60,7 +60,7 @@ export const addCliente = (req, res) => {
   });
 };
 
-export const updateCliente = async (req, res) => {
+export const editar_cliente = async (req, res) => {
   const { nome, email, telefone, cpf_cnpj, endereco } = req.body;
   const clienteId = req.params.id;
 
@@ -92,7 +92,7 @@ export const updateCliente = async (req, res) => {
   }
 };
 
-export const deleteCliente = (req, res) => {
+export const deletar_cliente = (req, res) => {
   const clienteId = req.params.id;
 
   const q = "UPDATE clientes SET status = 'inativo' WHERE id = ?";
@@ -102,7 +102,7 @@ export const deleteCliente = (req, res) => {
       return res.json(err);
     }
 
-    return res.status(200).json("Status do cliente atualizado para inativo.");
+    return res.status(200).json("Cliente deletado com sucesso.");
   });
 };
 
@@ -125,7 +125,7 @@ export async function getId_Endereco(id) {
   }
 }
 
-export const getAgendamentosCliente = (req, res) => {
+export const mostrar_historico = (req, res) => {
   const clienteId = req.params.id;
   const query = `SELECT  
       s.nome AS nome_servico, 

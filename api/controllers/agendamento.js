@@ -2,7 +2,7 @@ import { db } from "../db.js";
 import { promisify } from "util";
 import nodemailer from "nodemailer";
 
-export const getAgendamento = (_, res) => {
+export const listar_agendamentos = (_, res) => {
   const q = `
     SELECT a.*, c.nome AS cliente_nome, s.nome AS servico_nome 
     FROM agendamentos a
@@ -20,7 +20,6 @@ export const getAgendamento = (_, res) => {
   });
 };
 
-// Configuração do nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -34,8 +33,7 @@ function formatDateToDDMMYYYY(dateString) {
   return `${day}/${month}/${year}`;
 }
 
-// Função para enviar email
-function sendAppointmentEmail(clienteEmail, agendamento) {
+function gerar_notificacao(clienteEmail, agendamento) {
   const dataInicioFormatada = formatDateToDDMMYYYY(agendamento.data_inicio);
   const previsaoTerminoFormatada = formatDateToDDMMYYYY(
     agendamento.previsao_termino
@@ -59,7 +57,7 @@ Previsão de Término: ${previsaoTerminoFormatada}.`,
   });
 }
 
-function sendCompletionEmail(clienteEmail, agendamento) {
+function gerar_notificacao_concluido(clienteEmail, agendamento) {
   const dataTerminoFormatada = formatDateToDDMMYYYY(agendamento.data_termino);
 
   const mailOptions = {
@@ -78,7 +76,7 @@ function sendCompletionEmail(clienteEmail, agendamento) {
   });
 }
 
-export const addAgendamento = (req, res) => {
+export const criar_agendamento = (req, res) => {
   const { data_inicio, previsao_termino, cliente_id, servico_id } = req.body;
 
   db.beginTransaction((err) => {
@@ -129,7 +127,7 @@ export const addAgendamento = (req, res) => {
               return db.rollback(() => res.json(err));
             }
 
-            sendAppointmentEmail(clienteEmail, {
+            gerar_notificacao(clienteEmail, {
               data_inicio,
               servico_nome: servicoNome,
               previsao_termino,
@@ -143,7 +141,7 @@ export const addAgendamento = (req, res) => {
   });
 };
 
-export const updateAgendamento = async (req, res) => {
+export const edita_agendamento = async (req, res) => {
   const { data_inicio, previsao_termino, cliente_id, servico_id } = req.body;
   const agendamentoId = req.params.id;
 
@@ -175,7 +173,7 @@ export const updateAgendamento = async (req, res) => {
   }
 };
 
-export const deleteAgendamento = (req, res) => {
+export const deletar_agendamento = (req, res) => {
   const agendamentoId = req.params.id;
 
   const q = "DELETE FROM agendamentos WHERE id = ?";
@@ -189,7 +187,7 @@ export const deleteAgendamento = (req, res) => {
   });
 };
 
-export const completeAgendamento = (req, res) => {
+export const concluir_agendamento = (req, res) => {
   const agendamentoId = req.params.id;
   const currentDate = new Date().toISOString().split("T")[0];
   const q =
@@ -215,7 +213,7 @@ export const completeAgendamento = (req, res) => {
       }
 
       const { email: clienteEmail, servico_nome } = result[0];
-      sendCompletionEmail(clienteEmail, {
+      gerar_notificacao_concluido(clienteEmail, {
         servico_nome,
         data_termino: currentDate,
       });

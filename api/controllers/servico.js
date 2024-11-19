@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 import { promisify } from "util";
 
-export const getServico = (_, res) => {
+export const listar_servicos = (_, res) => {
   const q = "SELECT * FROM servicos";
 
   db.query(q, (err, data) => {
@@ -11,7 +11,7 @@ export const getServico = (_, res) => {
   });
 };
 
-export const addServico = (req, res) => {
+export const criar_servico = (req, res) => {
   const { nome, preco_medio } = req.body;
 
   db.beginTransaction((err) => {
@@ -41,7 +41,7 @@ export const addServico = (req, res) => {
   });
 };
 
-export const updateServico = async (req, res) => {
+export const editar_servico = async (req, res) => {
   const { nome, preco_medio } = req.body;
   const servicoId = req.params.id;
 
@@ -63,7 +63,7 @@ export const updateServico = async (req, res) => {
   }
 };
 
-export const deleteServico = (req, res) => {
+export const deletar_servico = (req, res) => {
   const servicoId = req.params.id;
 
   const q = "UPDATE servicos SET status = 'inativo' WHERE id_Servico = ?";

@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  addAgendamento,
-  deleteAgendamento,
-  getAgendamento,
-  updateAgendamento,
-  completeAgendamento,
+  criar_agendamento,
+  deletar_agendamento,
+  listar_agendamentos,
+  edita_agendamento,
+  concluir_agendamento,
 } from "../controllers/agendamento.js";
 
 const router = express.Router();
 
-router.get("/", getAgendamento);
-router.post("/", addAgendamento);
-router.put("/:id", updateAgendamento);
-router.put("/concluir/:id", completeAgendamento);
-router.delete("/:id", deleteAgendamento);
+router.get("/", listar_agendamentos);
+router.post("/", criar_agendamento);
+router.put("/:id", edita_agendamento);
+router.put("/concluir/:id", concluir_agendamento);
+router.delete("/:id", deletar_agendamento);
 
 export default router;

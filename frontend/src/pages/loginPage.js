@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Importando ícones de olho
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -11,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body, html {
-  font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     height: 100%;
     margin: 0;
   }
@@ -72,7 +73,7 @@ const Logo = styled.img`
 const Button = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #0075ff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -85,10 +86,25 @@ const Button = styled.button`
   }
 `;
 
-const LoginPage = () => {
+const EyeIcon = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 38px;
+  cursor: pointer;
+`;
+
+const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -99,22 +115,13 @@ const LoginPage = () => {
         senha,
       });
 
-      // Salva o token no localStorage
       localStorage.setItem("token", response.data.token);
-
-      // Realiza a navegação para a Home, agora que o token está armazenado
+      onLogin();
       navigate("/home");
     } catch (error) {
       alert(error.response?.data?.error || "Erro ao fazer login");
     }
   };
-
-  useEffect(() => {
-    // Verifica se já está autenticado e redireciona para home
-    if (localStorage.getItem("token")) {
-      navigate("/home");
-    }
-  }, [navigate]);
 
   return (
     <>
@@ -134,15 +141,18 @@ const LoginPage = () => {
                 required
               />
             </div>
-            <div>
+            <div style={{ position: "relative" }}>
               <Label htmlFor="senha">Senha:</Label>
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required
               />
+              <EyeIcon onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </EyeIcon>
             </div>
             <Button type="submit">Entrar</Button>
           </form>

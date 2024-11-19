@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
-  Route,
   Routes,
+  Route,
   Navigate,
 } from "react-router-dom";
 import HomePage from "./pages/homePage";
@@ -12,38 +12,48 @@ import AgendamentoPage from "./pages/agendamentoPage";
 import LoginPage from "./pages/loginPage";
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token"); // Verifica se há um token no localStorage
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <Router>
-      <div>
-        <Routes>
-          <Route
-            path="/"
-            element={isAuthenticated ? <Navigate to="/home" /> : <LoginPage />}
-          />
-          <Route
-            path="/home"
-            element={isAuthenticated ? <HomePage /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/clientes"
-            element={isAuthenticated ? <ClientePage /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/servicos"
-            element={isAuthenticated ? <ServicoPage /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/agendamentos"
-            element={
-              isAuthenticated ? <AgendamentoPage /> : <Navigate to="/" />
-            }
-          />
-
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/home"
+          element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/clientes"
+          element={isAuthenticated ? <ClientePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/servicos"
+          element={isAuthenticated ? <ServicoPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/agendamentos"
+          element={
+            isAuthenticated ? <AgendamentoPage /> : <Navigate to="/login" />
+          }
+        />
+        <Route
+          path="/login"
+          element={<LoginPage onLogin={() => setIsAuthenticated(true)} />}
+        />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
     </Router>
   );
 };

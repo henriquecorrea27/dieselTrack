@@ -73,7 +73,7 @@ export const deleteServico = (req, res) => {
       return res.json(err);
     }
 
-    return res.status(200).json("Status do serviço atualizado para inativo.");
+    return res.status(200).json("Serviço excluído com sucesso.");
   });
 };
 

@@ -2,8 +2,6 @@ import { db } from "../db.js";
 import { promisify } from "util";
 import nodemailer from "nodemailer";
 
-// Obtém todos os agendamentos
-// Obtém todos os agendamentos
 export const getAgendamento = (_, res) => {
   const q = `
     SELECT a.*, c.nome AS cliente_nome, s.nome AS servico_nome 
@@ -31,15 +29,25 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+function formatDateToDDMMYYYY(dateString) {
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 // Função para enviar email
 function sendAppointmentEmail(clienteEmail, agendamento) {
+  const dataInicioFormatada = formatDateToDDMMYYYY(agendamento.data_inicio);
+  const previsaoTerminoFormatada = formatDateToDDMMYYYY(
+    agendamento.previsao_termino
+  );
+
   const mailOptions = {
     from: "henrique.correia600@gmail.com",
     to: clienteEmail,
     subject: "Agendamento Confirmado!",
-    text: `Olá, seu agendamento foi feito na data: ${agendamento.data_inicio}.
+    text: `Olá, seu agendamento foi feito na data: ${dataInicioFormatada}.
 Detalhes do serviço: ${agendamento.servico_nome}.
-Previsão de Término: ${agendamento.previsao_termino}.`,
+Previsão de Término: ${previsaoTerminoFormatada}.`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -52,11 +60,13 @@ Previsão de Término: ${agendamento.previsao_termino}.`,
 }
 
 function sendCompletionEmail(clienteEmail, agendamento) {
+  const dataTerminoFormatada = formatDateToDDMMYYYY(agendamento.data_termino);
+
   const mailOptions = {
     from: "henrique.correia600@gmail.com",
     to: clienteEmail,
     subject: "Serviço Concluído!",
-    text: `Olá, informamos que o serviço ${agendamento.servico_nome} foi concluído na data ${agendamento.data_termino}. Obrigado por contar conosco!`,
+    text: `Olá, informamos que o serviço ${agendamento.servico_nome} foi concluído na data ${dataTerminoFormatada}. Obrigado por contar conosco!`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -68,7 +78,6 @@ function sendCompletionEmail(clienteEmail, agendamento) {
   });
 }
 
-// Adiciona um novo agendamento
 export const addAgendamento = (req, res) => {
   const { data_inicio, previsao_termino, cliente_id, servico_id } = req.body;
 
@@ -96,7 +105,6 @@ export const addAgendamento = (req, res) => {
         return db.rollback(() => res.json(err));
       }
 
-      // Buscando o email do cliente
       const q2 = "SELECT email FROM clientes WHERE id = ?";
       db.query(q2, [cliente_id], (err, clienteData) => {
         if (err) {
@@ -106,7 +114,6 @@ export const addAgendamento = (req, res) => {
 
         const clienteEmail = clienteData[0].email;
 
-        // Buscando o nome do serviço
         const q3 = "SELECT nome FROM servicos WHERE id_Servico = ?";
         db.query(q3, [servico_id], (err, servicoData) => {
           if (err) {
@@ -116,17 +123,15 @@ export const addAgendamento = (req, res) => {
 
           const servicoNome = servicoData[0].nome;
 
-          // Commit da transação
           db.commit((err) => {
             if (err) {
               console.error("Erro ao fazer commit da transação:", err);
               return db.rollback(() => res.json(err));
             }
 
-            // Enviar o email para o cliente após o commit
             sendAppointmentEmail(clienteEmail, {
               data_inicio,
-              servico_nome: servicoNome, // Passar o nome do serviço
+              servico_nome: servicoNome,
               previsao_termino,
             });
 
@@ -138,7 +143,6 @@ export const addAgendamento = (req, res) => {
   });
 };
 
-// Atualiza um agendamento existente
 export const updateAgendamento = async (req, res) => {
   const { data_inicio, previsao_termino, cliente_id, servico_id } = req.body;
   const agendamentoId = req.params.id;
@@ -171,7 +175,6 @@ export const updateAgendamento = async (req, res) => {
   }
 };
 
-// Deleta (desativa) um agendamento
 export const deleteAgendamento = (req, res) => {
   const agendamentoId = req.params.id;
 
@@ -188,7 +191,7 @@ export const deleteAgendamento = (req, res) => {
 
 export const completeAgendamento = (req, res) => {
   const agendamentoId = req.params.id;
-  const currentDate = new Date().toISOString().split("T")[0]; // Obter data atual no formato "YYYY-MM-DD"
+  const currentDate = new Date().toISOString().split("T")[0];
   const q =
     "UPDATE agendamentos SET status = 'concluido', data_termino = ? WHERE id = ?";
 

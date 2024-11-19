@@ -140,7 +140,7 @@ const Grid = ({ clientes = [], setClientes, setOnEdit }) => {
       const { data: agendamentos } = await axios.get(
         `http://localhost:8800/clientes/${cliente.id}`
       );
-      setViewDetails({ ...cliente, agendamentos });
+      setViewDetails({ ...cliente, agendamentos: agendamentos || [] });
     } catch (error) {
       toast.error("Erro ao buscar agendamentos.");
       console.error("Erro ao buscar agendamentos", error);

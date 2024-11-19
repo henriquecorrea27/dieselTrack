@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { MdLogout } from "react-icons/md";
-import { useNavigate } from "react-router-dom"; // Importando o hook para navegação
+import { useNavigate } from "react-router-dom";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -59,6 +59,8 @@ const Button = styled.button`
   img {
     height: 500px;
     width: 300px;
+    object-fit: cover;
+    border-radius: 15px;
   }
 
   &:hover {
@@ -67,12 +69,11 @@ const Button = styled.button`
 `;
 
 const HomePage = () => {
-  const navigate = useNavigate(); // Hook para navegação
+  const navigate = useNavigate();
 
-  // Função de logout
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove o token do localStorage
-    navigate("/login"); // Redireciona para a página de login
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (

@@ -170,9 +170,7 @@ const Form = ({
 
   const handleDateChange = (e) => {
     const { value } = e.target;
-    const formattedValue = value
-      .replace(/\D/g, "") // Remove qualquer caractere não numérico
-      .slice(0, 8); // Limita a 8 caracteres (ddmmyyyy)
+    const formattedValue = value.replace(/\D/g, "").slice(0, 8);
 
     let formattedDate = formattedValue;
     if (formattedValue.length >= 2) {

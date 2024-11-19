@@ -138,10 +138,6 @@ export const getAgendamentosCliente = (req, res) => {
   db.query(query, [clienteId], (err, data) => {
     if (err) return res.status(500).json(err);
 
-    if (data.length === 0) {
-      return res.status(404).json({ message: "Nenhum agendamento encontrado" });
-    }
-
-    return res.status(200).json(data);
+    return res.status(200).json(data || []);
   });
 };

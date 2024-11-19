@@ -127,7 +127,13 @@ export async function getId_Endereco(id) {
 
 export const getAgendamentosCliente = (req, res) => {
   const clienteId = req.params.id;
-  const query = "SELECT * FROM agendamentos WHERE cliente_id = ?";
+  const query = `SELECT  
+      s.nome AS nome_servico, 
+      data_inicio,
+      data_termino
+    FROM agendamentos a
+    JOIN servicos s ON a.servico_id = s.id_Servico
+    WHERE a.cliente_id = ?`;
 
   db.query(query, [clienteId], (err, data) => {
     if (err) return res.status(500).json(err);

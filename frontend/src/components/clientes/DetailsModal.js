@@ -23,16 +23,32 @@ const ModalContainer = styled.div`
   max-width: 600px;
   max-height: 80vh;
   overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Content = styled.div`
+  flex: 1;
+  overflow-y: auto;
 `;
 
 const Button = styled.button`
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   padding: 0.625rem;
-  margin-top: 1.25rem;
   cursor: pointer;
   border-radius: 0.313rem;
   border: none;
   color: white;
   background-color: #2c73d2;
+  z-index: 1100;
+`;
+
+const StrikeThrough = styled.span`
+  color: #999;
 `;
 
 const formatarData = (data) => {
@@ -50,62 +66,68 @@ const DetailsModal = ({ cliente, onClose }) => {
   return (
     <Overlay>
       <ModalContainer>
-        <h2>Detalhes do Cliente</h2>
-        <p>
-          <strong>Nome:</strong> {cliente.nome}
-        </p>
-        <p>
-          <strong>Email:</strong> {cliente.email}
-        </p>
-        <p>
-          <strong>Telefone:</strong> {cliente.telefone}
-        </p>
-        <p>
-          <strong>CPF/CNPJ:</strong> {cliente.cpf_cnpj}
-        </p>
-        <h3>Endereço</h3>
-        <p>
-          <strong>Rua:</strong> {cliente.rua}
-        </p>
-        <p>
-          <strong>Número:</strong> {cliente.numero}
-        </p>
-        <p>
-          <strong>Bairro:</strong> {cliente.bairro}
-        </p>
-        <p>
-          <strong>Cidade:</strong> {cliente.cidade}
-        </p>
-        <p>
-          <strong>Estado:</strong> {cliente.estado}
-        </p>
-        <p>
-          <strong>CEP:</strong> {cliente.cep}
-        </p>
+        <Content>
+          <h2>Detalhes do Cliente</h2>
+          <p>
+            <strong>Nome:</strong> {cliente.nome}
+          </p>
+          <p>
+            <strong>Email:</strong> {cliente.email}
+          </p>
+          <p>
+            <strong>Telefone:</strong> {cliente.telefone}
+          </p>
+          <p>
+            <strong>CPF/CNPJ:</strong> {cliente.cpf_cnpj}
+          </p>
+          <h3>Endereço</h3>
+          <p>
+            <strong>Rua:</strong> {cliente.rua}
+          </p>
+          <p>
+            <strong>Número:</strong> {cliente.numero}
+          </p>
+          <p>
+            <strong>Bairro:</strong> {cliente.bairro}
+          </p>
+          <p>
+            <strong>Cidade:</strong> {cliente.cidade}
+          </p>
+          <p>
+            <strong>Estado:</strong> {cliente.estado}
+          </p>
+          <p>
+            <strong>CEP:</strong> {cliente.cep}
+          </p>
 
-        <h3>Agendamentos</h3>
-        {cliente.agendamentos.length > 0 ? (
-          cliente.agendamentos.map((agendamento) => (
-            <div key={agendamento.id}>
-              <p>
-                <strong>Serviço:</strong> {agendamento.nome_servico}
-              </p>
+          <h3>Agendamentos</h3>
+          {cliente.agendamentos.length > 0 ? (
+            cliente.agendamentos.map((agendamento) => (
+              <div key={agendamento.id}>
+                <p>
+                  <strong>Serviço:</strong> {agendamento.nome_servico}
+                </p>
 
-              <p>
-                <strong>Data Ínicio:</strong>{" "}
-                {formatarData(agendamento.data_inicio)}
-              </p>
-              <p>
-                <strong>Data Término:</strong>{" "}
-                {formatarData(agendamento.data_termino)}
-              </p>
+                <p>
+                  <strong>Data Ínicio:</strong>{" "}
+                  {formatarData(agendamento.data_inicio)}
+                </p>
+                <p>
+                  <strong>Data Término:</strong>{" "}
+                  {agendamento.data_termino ? (
+                    formatarData(agendamento.data_termino)
+                  ) : (
+                    <StrikeThrough>Em andamento</StrikeThrough>
+                  )}
+                </p>
 
-              <hr />
-            </div>
-          ))
-        ) : (
-          <p>Nenhum agendamento encontrado para este cliente.</p>
-        )}
+                <hr />
+              </div>
+            ))
+          ) : (
+            <p>Nenhum agendamento encontrado para este cliente.</p>
+          )}
+        </Content>
 
         <Button onClick={onClose}>Fechar</Button>
       </ModalContainer>

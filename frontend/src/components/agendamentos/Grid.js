@@ -69,6 +69,10 @@ const Tr = styled.tr`
   display: table;
   width: 100%;
   table-layout: fixed; /* Garante largura fixa para as colunas */
+  text-decoration: ${(props) =>
+    props.isCompleted
+      ? "line-through"
+      : "none"}; /* Adiciona o riscado se o agendamento estiver concluído */
 `;
 
 // Estilização das células de cabeçalho
@@ -131,8 +135,39 @@ const ConfirmButton = styled.button`
       : "background-color: #ff5e5e;"}
 `;
 
+const FilterContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-left: 20px;
+
+  label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+`;
+
+const SearchBar = styled.input`
+  width: 100%;
+  padding: 10px 0px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+`;
+
 const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleEdit = (item) => {
     setOnEdit(item);
@@ -182,6 +217,26 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
     return format(new Date(dateString), "dd/MM/yyyy");
   };
 
+  const handleFilterChange = (event) => {
+    setFilterStatus(event.target.value);
+  };
+
+  const filteredAgendamentos = agendamentos
+    .filter((item) => {
+      // Filtra por status
+      if (filterStatus === "completed") return item.data_termino;
+      if (filterStatus === "in-progress") return !item.data_termino;
+      return true;
+    })
+    .filter((item) => {
+      // Filtra pelo nome do cliente
+      return item.cliente_nome.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <>
       {confirmDelete && (
@@ -200,30 +255,44 @@ const Grid = ({ agendamentos = [], setAgendamentos, setOnEdit }) => {
           </ConfirmBox>
         </ConfirmOverlay>
       )}
+
+      <FilterContainer>
+        <label htmlFor="filter">Filtrar por status:</label>
+        <select id="filter" value={filterStatus} onChange={handleFilterChange}>
+          <option value="all">Todos</option>
+          <option value="completed">Concluídos</option>
+          <option value="in-progress">Em andamento</option>
+        </select>
+      </FilterContainer>
+
       <TableContainer>
+        <SearchBar
+          type="text"
+          placeholder="Pesquisar por cliente..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
         <Table>
           <Thead>
             <Tr>
-              <Th width="20%">Data Inicio</Th>
-              <Th width="20%">Data Prevista de Termino</Th>
+              <Th width="15%">Data Inicio</Th>
+              <Th width="15%">Data Prevista de Termino</Th>
               <Th onlyWeb width="20%">
                 Cliente
               </Th>
               <Th onlyWeb width="20%">
                 Serviço
               </Th>
-              <Th width="2%">Concluir</Th>
+              <Th width="2%"></Th>
               <Th width="2%"></Th>
               <Th width="2%"></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {agendamentos.map((item, i) => (
+            {filteredAgendamentos.map((item, i) => (
               <Tr key={i} isCompleted={item.data_termino}>
-                {" "}
-                {/* Define o estilo da linha conforme o status */}
-                <Td width="20%">{formatDate(item.data_inicio)}</Td>
-                <Td width="20%">{formatDate(item.previsao_termino)}</Td>
+                <Td width="15%">{formatDate(item.data_inicio)}</Td>
+                <Td width="15%">{formatDate(item.previsao_termino)}</Td>
                 <Td width="20%" onlyWeb>
                   {item.cliente_nome}
                 </Td>

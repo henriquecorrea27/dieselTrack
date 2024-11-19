@@ -143,7 +143,6 @@ const Form = ({
     }
   }, [onEdit]);
 
-  // Função para validar a data no formato "dd/MM/yyyy"
   const isValidDate = (dateString) => {
     const [day, month, year] = dateString.split("/");
     const date = new Date(`${year}-${month}-${day}`);
@@ -167,6 +166,37 @@ const Form = ({
       new Date(convertDateToISO(endDate)) >
       new Date(convertDateToISO(startDate))
     );
+  };
+
+  const handleDateChange = (e) => {
+    const { value } = e.target;
+    const formattedValue = value
+      .replace(/\D/g, "") // Remove qualquer caractere não numérico
+      .slice(0, 8); // Limita a 8 caracteres (ddmmyyyy)
+
+    let formattedDate = formattedValue;
+    if (formattedValue.length >= 2) {
+      formattedDate = `${formattedValue.slice(0, 2)}/${formattedValue.slice(
+        2
+      )}`;
+    }
+    if (formattedValue.length >= 4) {
+      formattedDate = `${formattedDate.slice(0, 5)}/${formattedDate.slice(5)}`;
+    }
+
+    e.target.value = formattedDate;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    if ((name === "data_inicio" || name === "previsao_termino") && value) {
+      if (!isValidDate(value)) {
+        toast.error(
+          "Data inválida. Por favor, insira uma data válida no formato dd/mm/yyyy."
+        );
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -250,11 +280,20 @@ const Form = ({
         <FormContainer ref={ref} onSubmit={handleSubmit}>
           <InputArea style={{ gridArea: "data_inicio" }}>
             <Label>Data de Inicio</Label>
-            <Input name="data_inicio" />
+            <Input
+              name="data_inicio"
+              onChange={handleDateChange} // Chamando a função de formatação de data
+              onBlur={handleBlur} // Chamando a validação ao perder o foco
+            />
           </InputArea>
           <InputArea style={{ gridArea: "previsao_termino" }}>
             <Label>Data Prevista de Conclusão</Label>
-            <Input name="previsao_termino" type="text" />
+            <Input
+              name="previsao_termino"
+              onChange={handleDateChange} // Chamando a função de formatação de data
+              onBlur={handleBlur} // Chamando a validação ao perder o foco
+              type="text"
+            />
           </InputArea>
           <InputArea style={{ gridArea: "cliente" }}>
             <Label>Cliente</Label>

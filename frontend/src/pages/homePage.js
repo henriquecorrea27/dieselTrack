@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { MdLogout } from "react-icons/md";
+import { useNavigate } from "react-router-dom"; // Importando o hook para navegação
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -66,12 +67,20 @@ const Button = styled.button`
 `;
 
 const HomePage = () => {
+  const navigate = useNavigate(); // Hook para navegação
+
+  // Função de logout
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove o token do localStorage
+    navigate("/login"); // Redireciona para a página de login
+  };
+
   return (
     <>
       <GlobalStyle />
       <Header>
         <Logo src="./assets/logo.png" alt="Logo" />
-        <UserIconContainer onClick={() => console.log("Logout")}>
+        <UserIconContainer onClick={handleLogout}>
           <MdLogout size={30} style={{ marginLeft: "10px", color: "white" }} />
         </UserIconContainer>
       </Header>
